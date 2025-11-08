@@ -3,10 +3,21 @@ from webs.opscans import OpScans
 from webs.tcb_scans import TcbScans
 import utilities.custom_logger as cl
 import logging
+import smtplib
+import os
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 log = cl.custom_logger(logging.INFO)
 
-chapter_file = "chapter.txt"  # archivo donde guardaremos el número actual
+chapter_file = "chapter.txt"
+
+# Email config
+sender_email = os.environ.get("smtp_user", "anfernagar@gmail.com")
+password = os.environ.get("smtp_pass") 
+receiver_email = "anfernagar@gmail.com"
+smtp_server = "smtp.gmail.com"
+smtp_port = 587
 
 def get_last_chapter():
     with open(chapter_file, "r") as file:
@@ -15,6 +26,27 @@ def get_last_chapter():
 def establish_next_chapter(next_chapter):
     with open(chapter_file, "w") as file:
         file.write(str(next_chapter))
+
+def send_email(chapter, webs_available):
+    subject = f"New One Piece Chapter {chapter} Available!"
+    body = f"Chapter {chapter} is now available!\n\nYou can read it on:\n"
+    for web in webs_available:
+        body += f"{web}\n"
+
+    message = MIMEMultipart()
+    message["From"] = sender_email
+    message["To"] = receiver_email
+    message["Subject"] = subject
+    message.attach(MIMEText(body, "plain"))
+
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(sender_email, password)
+            server.send_message(message)
+        log.info(f"Email sent successfully for chapter {chapter}!")
+    except Exception as e:
+        log.error(f"Failed to send email: {e}")
 
 if __name__ == "__main__":
 
@@ -40,7 +72,7 @@ if __name__ == "__main__":
             images = page.get_chapter_images()
 
             if images:
-                webs_available.append(f"Chapter {chapter} is already available in: {url}")
+                webs_available.append(url)
             else:
                 log.error(f"NOT LUCKY: Chapter {chapter} NOT available in: {url}")
 
@@ -55,6 +87,9 @@ if __name__ == "__main__":
         for web in webs_available:
             print(web)
             log.critical(web)
+
+        send_email(chapter, webs_available)
+
         next_chapter = str(int(chapter) + 1)
         establish_next_chapter(next_chapter)
         log.info(f"Next chapter will be: {next_chapter}")
