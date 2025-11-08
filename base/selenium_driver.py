@@ -2,13 +2,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import *
-import utilities.custom_logger as cl
-import logging
 
 # Generic methods for Selenium
 class SeleniumDriver():
-
-    log = cl.custom_logger(logging.ERROR)
 
     def __init__(self, driver):
         self.driver = driver
@@ -28,7 +24,7 @@ class SeleniumDriver():
         elif locator_type == "css":
             return By.CSS_SELECTOR
         else:
-            self.log.debug(f"Locator type: {locator_type} not found")
+            print(f"Locator type: {locator_type} not found")
         return False
 
     def get_element(self, locator, locator_type="xpath", element=None):
@@ -37,7 +33,7 @@ class SeleniumDriver():
             by_type = self.get_by_type(locator_type)
             element = self.driver.find_element(by_type, locator)
         except:
-            self.log.error(f"Element not found with locator: {locator} and locatorType: {locator_type}")
+            print(f"Element not found with locator: {locator} and locatorType: {locator_type}")
         return element
 
     def get_elementList(self, locator, locator_type="xpath", element_list=None):
@@ -46,7 +42,7 @@ class SeleniumDriver():
             by_type = self.get_by_type(locator_type)
             element_list = self.driver.find_elements(by_type, locator)
         except:
-            self.log.error(f"Element list not found with locator: {locator} and locatorType: {locator_type}")
+            print(f"Element list not found with locator: {locator} and locatorType: {locator_type}")
         return element_list
 
     def element_click(self, locator=None, locator_type="xpath", element=None):
@@ -55,7 +51,7 @@ class SeleniumDriver():
                 element = self.get_element(locator, locator_type)
             element.click()
         except:
-            self.log.error(f"Could not click on element with locator: {locator} and locatorType: {locator_type}")
+            print(f"Could not click on element with locator: {locator} and locatorType: {locator_type}")
 
     def isElement_displayed(self, locator, locator_type="xpath", element=None):
         is_displayed = False
@@ -65,7 +61,7 @@ class SeleniumDriver():
                 if element is not None:
                     is_displayed = element.is_displayed()
                 else:
-                    self.log.debug(f"Element not displayed with locator: {locator} and locatorType: {locator_type}")
+                    print(f"Element not displayed with locator: {locator} and locatorType: {locator_type}")
                 return is_displayed
         except:
             self.log.error(f"Element not found with locator: {locator} and locatorType: {locator_type}")
@@ -94,9 +90,9 @@ class SeleniumDriver():
                 elif condition == "click":
                     element = wait.until(EC.element_to_be_clickable((by_type, locator)))
                 else:
-                    self.log.debug(f"Invalid condition: {condition} - Use 'present', 'visible', or 'click'")
+                    print(f"Invalid condition: {condition} - Use 'present', 'visible', or 'click'")
         except:
-            self.log.error(f"Element not found with locator: {locator} and locatorType: {locator_type}")
+            print(f"Element not found with locator: {locator} and locatorType: {locator_type}")
         return element
 
     def switch_frame(self, id="", name="", index=None):

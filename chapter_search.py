@@ -1,14 +1,10 @@
 from web_config import WebConfig
 from webs.opscans import OpScans
 from webs.tcb_scans import TcbScans
-import utilities.custom_logger as cl
-import logging
 import smtplib
 import os
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-
-log = cl.custom_logger(logging.INFO)
 
 chapter_file = "chapter.txt"
 
@@ -35,7 +31,7 @@ def send_email(chapter, webs_available):
     subject = f"New One Piece Chapter {chapter} Available!"
     body = f"Chapter {chapter} is now available!\n\nYou can read it on:\n"
     for web in webs_available:
-        body += f"{web}\n"
+        body += f"{web["name"]}: {web["url"]}\n"
 
     message = MIMEMultipart()
     message["From"] = sender_email
@@ -48,9 +44,9 @@ def send_email(chapter, webs_available):
             server.starttls()
             server.login(sender_email, password)
             server.send_message(message)
-        log.info(f"Email sent successfully for chapter {chapter}!")
+        print(f"Email sent successfully for chapter {chapter}!")
     except Exception as e:
-        log.error(f"Failed to send email: {e}")
+        print(f"Failed to send email: {e}")
 
 if __name__ == "__main__":
 
@@ -66,8 +62,10 @@ if __name__ == "__main__":
         try:
             if "opchapters" in url:
                 page = OpScans(driver)
+                web_name = "OP Scans"
             elif "tcbscans" in url:
                 page = TcbScans(driver)
+                web_name = "TCB Scans"
             else:
                 print(f"{url} is not supported")
                 driver.quit()
@@ -76,12 +74,12 @@ if __name__ == "__main__":
             images = page.get_chapter_images()
 
             if images:
-                webs_available.append(url)
+                webs_available.append({"name": web_name, "url": url})
             else:
-                log.error(f"NOT LUCKY: Chapter {chapter} NOT available in: {url}")
+                print(f"NOT LUCKY: Chapter {chapter} NOT available in: {url}")
 
         except Exception as e:
-            log.error(f"Error while checking {url}: {e}")
+            print(f"Error while checking {url}: {e}")
 
         finally:
             driver.quit()
@@ -90,13 +88,12 @@ if __name__ == "__main__":
         print(f"CHAPTER {chapter} IS ALREADY OUT!! Here are the webs where you can read it.")
         for web in webs_available:
             print(web)
-            log.critical(web)
 
         send_email(chapter, webs_available)
 
         next_chapter = str(int(chapter) + 1)
         establish_next_chapter(next_chapter)
-        log.info(f"Next chapter will be: {next_chapter}")
+        print(f"Next chapter will be: {next_chapter}")
     else:
-        log.error(f"Chapter {chapter} is not available in any web yet. We will keep searching for the One Piece")
+        print(f"Chapter {chapter} is not available in any web yet. We will keep searching for the One Piece")
 
