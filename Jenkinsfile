@@ -3,20 +3,16 @@ pipeline {
     stages {
         stage('Check Chapter') {
             steps {
-                script {
-                    // Restore previous chapter.txt if it exists
-                    if (fileExists('chapter.txt')) {
-                        unstash 'chapter-txt'
-                    }
-                }
+               // Restore previous chapter.txt
+                copyArtifacts(projectName: currentBuild.projectName, filter: 'chapter.txt', optional: true)
 
-                // Use credentials stored in Jenkins
+                // USe credentials in Jenkins
                 withCredentials([string(credentialsId: 'gmail-creds', variable: 'smtp_pass')]) {
-                    bat 'set smtp_pass=%smtp_pass% && call venv\\Scripts\\activate && python chapter_search.py'
+                bat 'set smtp_pass=%smtp_pass% && call venv\\Scripts\\activate && python chapter_search.py'
                 }
 
-                // Save updated chapter.txt for next build
-                stash includes: 'chapter.txt', name: 'chapter-txt', allowEmpty: true
+                // Archive updated chapter.txt
+                archiveArtifacts artifacts: 'chapter.txt', fingerprint: true
             }
         }
     }
