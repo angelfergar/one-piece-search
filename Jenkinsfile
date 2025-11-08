@@ -18,20 +18,15 @@ pipeline {
         stage('Notify if New Chapter') {
             steps {
                 script {
-                    def current = readFile('result.txt')
-                    def previous = fileExists('result_prev.txt') ? readFile('result_prev.txt') : ''
-
-                    // Only send email if something new appeared
-                    if (current != previous) {
+                    def content = readFile('result.txt')
+                    if (content.contains('NEW_CHAPTER_FOUND')) {
                         emailext(
                             subject: 'New One Piece Chapter Available!',
-                            body: current,
+                            body: content,
                             to: 'anfernagar@gmail.com'
                         )
-                        // Save this as last result
-                        writeFile file: 'result_prev.txt', text: current
                     } else {
-                        echo 'New chapter is not available yet.'
+                        echo 'No new chapters found.'
                     }
                 }
             }
@@ -40,6 +35,7 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: 'result.txt, result_prev.txt', onlyIfSuccessful: true
+            archiveArtifacts artifacts: 'result.txt', onlyIfSuccessful: true
         }
     }
+}
