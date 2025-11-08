@@ -4,14 +4,14 @@ pipeline {
     stages {
         stage('Setup Environment') {
             steps {
-                sh 'python3 -m venv venv'
-                sh '. venv/bin/activate && pip install -r requirements.txt'
+                bat 'python -m venv venv'
+                bat 'venv\\Scripts\\activate && pip install -r requirements.txt'
             }
         }
 
         stage('Run Script') {
             steps {
-                sh '. venv/bin/activate && python3 script.py > result.txt'
+                bat 'venv\\Scripts\\activate && python script.py > result.txt'
             }
         }
 
@@ -21,7 +21,7 @@ pipeline {
                     def content = readFile('result.txt')
                     if (content.contains('NEW_CHAPTER_FOUND')) {
                         emailext(
-                            subject: 'New One Piece Chapter Available!',
+                            subject: "New One Piece Chapter Available!",
                             body: content,
                             to: 'anfernagar@gmail.com'
                         )
