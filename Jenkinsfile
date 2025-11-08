@@ -24,7 +24,7 @@ pipeline {
                     // Only send email if something new appeared
                     if (current != previous) {
                         emailext(
-                            subject: New One Piece Chapter Available!',
+                            subject: 'New One Piece Chapter Available!',
                             body: current,
                             to: 'anfernagar@gmail.com'
                         )
