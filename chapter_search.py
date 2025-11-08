@@ -14,7 +14,7 @@ chapter_file = "chapter.txt"
 
 # Email config
 sender_email = os.environ.get("smtp_user", "anfernagar@gmail.com")
-password = os.environ.get("smtp_pass") 
+password = os.environ.get("smtp_pass")
 receiver_email = "anfernagar@gmail.com"
 smtp_server = "smtp.gmail.com"
 smtp_port = 587

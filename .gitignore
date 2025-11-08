@@ -3,3 +3,4 @@
 .pytest_cache/
 *.log
 *__pycache__/
+chapter.txt
