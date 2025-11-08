@@ -30,7 +30,9 @@ pipeline {
                                 subject: "New One Piece Chapter Available!",
                                 body: current,
                                 to: 'anfernagar@gmail.com',
-                                mimeType: 'text/plain'
+                                mimeType: 'text/plain',
+                                replyTo: 'anfernagar@gmail.com',
+                                from: 'anfernagar@gmail.com'
                             )
                             echo "Email sent successfully."
                             // Save this as the previous result
