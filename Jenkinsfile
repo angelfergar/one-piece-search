@@ -11,7 +11,7 @@ pipeline {
 
         stage('Run Script') {
             steps {
-                bat 'venv\\Scripts\\activate && python script.py > result.txt'
+                bat 'venv\\Scripts\\activate && python chapter_search.py > result.txt'
             }
         }
 
