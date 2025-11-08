@@ -19,7 +19,7 @@ pipeline {
             steps {
                 script {
                     def content = readFile('result.txt')
-                    if (content.contains('IS ALREADY OUT')) {
+                    if (content.trim()) {
                         emailext(
                             subject: "New One Piece Chapter Available!",
                             body: content,
