@@ -1,14 +1,11 @@
 pipeline {
     agent any
-    triggers {
-        cron('H/15 * * * 4-6')
-    }
     stages {
         stage('Check Chapter') {
             steps {
                 // Use credentials for email
                 withCredentials([string(credentialsId: 'gmail-creds', variable: 'smtp_pass')]) {
-                    bat 'set smtp_pass=%smtp_pass% && call venv\\Scripts\\activate && python chapter_search.py'
+                bat 'set smtp_pass=%smtp_pass% && call venv\\Scripts\\activate && python chapter_search.py'
                 }
             }
         }
