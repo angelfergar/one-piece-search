@@ -1,6 +1,7 @@
 from web_config import WebConfig
 from webs.opscans import OpScans
 from webs.tcb_scans import TcbScans
+from webs.read_onepiece import ReadOnePiece
 import smtplib
 import os
 from email.mime.text import MIMEText
@@ -52,7 +53,8 @@ if __name__ == "__main__":
 
     wc = WebConfig()
     webs = ["https://opchapters.com/op-chapter-{chapter}",
-            "https://tcbscansonepiece.com/one-piece-chapter-{chapter}-manga/"]
+            "https://tcbscansonepiece.com/one-piece-chapter-{chapter}-manga/",
+            "https://readonepiece.cc/reader?chapter=1165"]
     chapter = get_last_chapter()
     webs_available = []
 
@@ -66,6 +68,9 @@ if __name__ == "__main__":
             elif "tcbscans" in url:
                 page = TcbScans(driver)
                 web_name = "TCB Scans"
+            elif "readonepiece" in url:
+                page = ReadOnePiece(driver)
+                web_name = "Read One Piece"
             else:
                 print(f"{url} is not supported")
                 driver.quit()
