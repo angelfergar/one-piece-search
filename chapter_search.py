@@ -54,7 +54,7 @@ if __name__ == "__main__":
     wc = WebConfig()
     webs = ["https://opchapters.com/op-chapter-{chapter}",
             "https://tcbscansonepiece.com/one-piece-chapter-{chapter}-manga/",
-            "https://readonepiece.cc/reader?chapter=1165"]
+            "https://readonepiece.cc/reader?chapter={chapter}"]
     chapter = get_last_chapter()
     webs_available = []
 
