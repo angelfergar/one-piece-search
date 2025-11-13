@@ -106,3 +106,22 @@ class SeleniumDriver():
     # Method to go back to the main frame of the web
     def switchTo_defaultContent(self):
         self.driver.switch_to.default_content()
+
+    # Generic method to obtain the text from the elements in the web
+    def get_text(self, locator=None, locator_type="xpath", element=None):
+        text = ""
+        try:
+            if locator:
+                element = self.get_element(locator, locator_type)
+            text = element.text
+            if len(text) == 0:
+                text = element.get_attribute("innerText")
+                text = text.strip()
+            if text:
+                text = text.strip()
+            else:
+                print(f"Element had no visible text.")
+        except:
+            print(f"Failed to get the text in the element with locator: {locator} and locatorType: {locator_type}")
+            text = None
+        return text

@@ -8,3 +8,10 @@ class Util():
         else:
             print("The list's length is not the same as the expected")
             return False
+
+    def verify_text_contains(self, actual_text, expected_text):
+        if actual_text.lower() in expected_text.lower():
+            return True
+        else:
+            print("Text does not contain the expected content")
+            return False

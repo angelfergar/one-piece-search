@@ -13,7 +13,7 @@ class ReadOnePiece(BasePage):
     # Locators
     _chapter_images = "lazy" #class
 
-    def get_chapter_images(self):
+    def get_chapter_images(self, chapter=None):
         self.wait_for_element(self._chapter_images, locator_type="class", condition="visible")
         current_list = self.get_elementList(self._chapter_images, locator_type="class")
         if len(current_list) > 1:

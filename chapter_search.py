@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     wc = WebConfig()
     webs = ["https://opchapters.com/op-chapter-{chapter}",
-            "https://tcbscansonepiece.com/one-piece-chapter-{chapter}-manga/",
+            "https://tcbscansonepiece.com/one-piece-chapter-{chapter}-read/",
             "https://readonepiece.cc/reader?chapter={chapter}"]
     chapter = get_last_chapter()
     webs_available = []
@@ -76,7 +76,7 @@ if __name__ == "__main__":
                 driver.quit()
                 continue
 
-            images = page.get_chapter_images()
+            images = page.get_chapter_images(chapter)
 
             if images:
                 webs_available.append({"name": web_name, "url": url})
