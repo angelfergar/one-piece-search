@@ -5,8 +5,8 @@ class WebDriverFactory():
     def get_webdriver(self, base_url):
         options = Options()
         options.headless = True
+        options.add_argument("--headless")
 
         driver = webdriver.Firefox(options=options)
-        driver.maximize_window()
         driver.get(base_url)
         return driver
