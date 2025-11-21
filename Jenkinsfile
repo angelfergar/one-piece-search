@@ -18,10 +18,13 @@ pipeline {
 
         stage('Check Chapter') {
             steps {
-                withCredentials([string(credentialsId: 'gmail-creds', variable: 'smtp_pass')]) {
+                withCredentials([
+                    string(credentialsId: 'gmail-creds', variable: 'smtp_pass'),
+                    string(credentialsId: 'op_receivers', variable: 'op_receivers')]) {
                     bat '''
                     call venv\\Scripts\\activate
                     set smtp_pass=%smtp_pass%
+                    set op_receivers=%op_receivers%
                     python chapter_search.py
                     '''
                 }
