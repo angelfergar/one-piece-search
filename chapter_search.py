@@ -40,7 +40,7 @@ def send_email(chapter, webs_available):
 
     message = MIMEMultipart()
     message["From"] = sender_email
-    message["To"] = sender_email
+    message["To"] = "OP Fans"
     message["Subject"] = subject
     message.attach(MIMEText(body, "plain"))
 
