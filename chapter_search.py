@@ -12,9 +12,11 @@ chapter_file = "chapter.txt"
 # Email config
 sender_email = os.environ.get("smtp_user", "anfernagar@gmail.com")
 password = os.environ.get("smtp_pass")
-receiver_email = "anfernagar@gmail.com"
+raw_receivers = os.environ.get("op_receivers", "")
+receiver_emails = [r.strip() for r in raw_receivers.split(",") if r.strip()]
 smtp_server = "smtp.gmail.com"
 smtp_port = 587
+
 
 def get_last_chapter():
     if not os.path.exists(chapter_file):
@@ -24,9 +26,11 @@ def get_last_chapter():
     with open(chapter_file, "r") as file:
         return file.read().strip()
 
+
 def establish_next_chapter(next_chapter):
     with open(chapter_file, "w") as file:
         file.write(str(next_chapter))
+
 
 def send_email(chapter, webs_available):
     subject = f"New One Piece Chapter {chapter} Available!"
@@ -36,7 +40,7 @@ def send_email(chapter, webs_available):
 
     message = MIMEMultipart()
     message["From"] = sender_email
-    message["To"] = receiver_email
+    message["To"] = sender_email
     message["Subject"] = subject
     message.attach(MIMEText(body, "plain"))
 
@@ -44,10 +48,15 @@ def send_email(chapter, webs_available):
         with smtplib.SMTP(smtp_server, smtp_port) as server:
             server.starttls()
             server.login(sender_email, password)
-            server.send_message(message)
+            server.sendmail(
+                sender_email,
+                receiver_emails,
+                message.as_string()
+            )
         print(f"Email sent successfully for chapter {chapter}!")
     except Exception as e:
         print(f"Failed to send email: {e}")
+
 
 if __name__ == "__main__":
 
@@ -101,4 +110,3 @@ if __name__ == "__main__":
         print(f"Next chapter will be: {next_chapter}")
     else:
         print(f"Chapter {chapter} is not available in any web yet. We will keep searching for the One Piece")
-
