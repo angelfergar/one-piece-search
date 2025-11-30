@@ -125,3 +125,33 @@ class SeleniumDriver():
             print(f"Failed to get the text in the element with locator: {locator} and locatorType: {locator_type}")
             text = None
         return text
+
+    def getElement_attributeValue(self, attribute, locator=None, locator_type="xpath", element=None):
+        value = None
+        try:
+            if locator:
+                element = self.get_element(locator, locator_type)
+            value = element.get_attribute(attribute)
+            print(f"Got the value for the attribute: {attribute}  of the element with locator: {locator}"
+                  f" and locatorType: {locator_type}")
+        except:
+            print(f"Could not get the value for the attribute: {attribute}  of the element with locator: {locator}"
+                  f" and locatorType: {locator_type}")
+        return value
+
+    def scroll_toElement(self, locator=None, locator_type="xpath", element=None):
+        try:
+            if locator:
+                element = self.get_element(locator, locator_type)
+            self.driver.execute_script("arguments[0].scrollIntoView(true);", element)
+            print(f"Page was scrolled to element with locator: {locator} and locatorType: {locator_type}")
+        except:
+            print(f"Could not scroll to element with locator: {locator} and locatorType: {locator_type}")
+
+    def scroll_web(self, direction):
+        if direction == "up":
+            self.driver.execute_script("window.scrollBy(0,-12250);")
+            print(f"Page was scrolled {direction}")
+        elif direction == "down":
+            self.driver.execute_script("window.scrollBy(0,12250);")
+            print(f"Page was scrolled {direction}")
