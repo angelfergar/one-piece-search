@@ -35,10 +35,6 @@ def establish_next_chapter(next_chapter):
 def send_email(chapter, webs_available):
     subject = f"New One Piece Chapter {chapter} Available!"
     body = f"Chapter {chapter} is now available!\n\nYou can read it on:\n"
-    body = ("Patch Notes [30.11]\n"
-            "- Op Scans and TCB Scans have dynamics URLs. We've added as many dynamic links as we found\n"
-            "- We've added a system to track the number of the chapter in the first image of TCB Scans, as they"
-            "update the next week's chapters with the past week's images")
     for web in webs_available:
         body += f"{web["name"]}: {web["url"]}\n"
 
