@@ -23,7 +23,7 @@ class TcbScans(BasePage):
     _first_image = "(//img[@decoding='async'])[1]"
     _chapter_title = "//h1[contains(text(), 'One Piece')]"
 
-    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+    pytesseract.pytesseract.tesseract_cmd = r"C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
 
     def normalize(self, text):
         text = text.upper()

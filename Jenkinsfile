@@ -17,7 +17,7 @@ pipeline {
         }
 	stage('Check OCR') {
     	    steps {
-        	bat 'where tesseract'
+        	bat '"C:\\Program Files\\Tesseract-OCR\\tesseract.exe" --version'
     	    }
 	}
 
