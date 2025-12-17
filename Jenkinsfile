@@ -17,7 +17,7 @@ pipeline {
         }
 	stage('Check OCR') {
     	    steps {
-        	bat 'tesseract --version'
+        	bat 'where tesseract'
     	    }
 	}
 
