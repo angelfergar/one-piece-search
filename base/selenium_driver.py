@@ -27,11 +27,16 @@ class SeleniumDriver():
             print(f"Locator type: {locator_type} not found")
         return False
 
-    def get_element(self, locator, locator_type="xpath", element=None):
+    def get_element(self, locator, locator_type="xpath", element=None, parent=None):
         try:
             locator_type = locator_type.lower()
             by_type = self.get_by_type(locator_type)
-            element = self.driver.find_element(by_type, locator)
+            if parent is not None:
+                search_context = parent
+            else:
+                search_context = self.driver
+
+            element = search_context.find_element(by_type, locator)
         except:
             print(f"Element not found with locator: {locator} and locatorType: {locator_type}")
         return element
@@ -45,10 +50,13 @@ class SeleniumDriver():
             print(f"Element list not found with locator: {locator} and locatorType: {locator_type}")
         return element_list
 
-    def element_click(self, locator=None, locator_type="xpath", element=None):
+    def element_click(self, locator=None, locator_type="xpath", element=None, parent=None):
         try:
             if locator:
-                element = self.get_element(locator, locator_type)
+                if parent is not None:
+                    element = self.get_element(locator, locator_type, parent=parent)
+                else:
+                    element = self.get_element(locator, locator_type)
             element.click()
         except:
             print(f"Could not click on element with locator: {locator} and locatorType: {locator_type}")

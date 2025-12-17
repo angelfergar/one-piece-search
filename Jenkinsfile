@@ -15,6 +15,11 @@ pipeline {
                 '''
             }
         }
+	stage('Check OCR') {
+    	    steps {
+        	sh 'tesseract --version'
+    	    }
+	}
 
         stage('Check Chapter') {
             steps {

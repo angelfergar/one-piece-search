@@ -1,6 +1,7 @@
 from web_config import WebConfig
 from webs.opscans import OpScans
 from webs.tcb_scans import TcbScans
+from webs.tcb_op import TcbOp
 from webs.read_onepiece import ReadOnePiece
 import smtplib
 import os
@@ -21,8 +22,8 @@ smtp_port = 587
 def get_last_chapter():
     if not os.path.exists(chapter_file):
         with open(chapter_file, "w") as file:
-            file.write("1167")
-        return "1167"
+            file.write("1169")
+        return "1169"
     with open(chapter_file, "r") as file:
         return file.read().strip()
 
@@ -61,12 +62,14 @@ def send_email(chapter, webs_available):
 if __name__ == "__main__":
 
     wc = WebConfig()
+    webs = ["https://ww1.tcbscansonepiece.com/one-piece-manga"]
+    '''
     webs = ["https://opchapters.com/op-chapter-{chapter}",
-            "https://opchapters.com/op-{chapter}"
-            "https://tcbscansonepiece.com/one-piece-chapter-{chapter}-read/",
-            "https://tcbscansonepiece.com/one-piece-chapter-{chapter}",
-            "https://ww1.tcbscansonepiece.com/one-piece-chapter-{chapter}-manga",
-            "https://readonepiece.cc/reader?chapter={chapter}"]
+            "https://opchapters.com/op-{chapter}",
+            "https://ww1.tcbscansonepiece.com/one-piece-manga",
+            "https://tcbonepiecechapters.com/mangas/5/one-piece",
+            "https://readonepiece.cc/"]
+    '''
     chapter = get_last_chapter()
     webs_available = []
 
@@ -80,6 +83,9 @@ if __name__ == "__main__":
             elif "tcbscans" in url:
                 page = TcbScans(driver)
                 web_name = "TCB Scans"
+            elif "tcbonepiece" in url:
+                page = TcbOp(driver)
+                web_name = "TCB One Piece"
             elif "readonepiece" in url:
                 page = ReadOnePiece(driver)
                 web_name = "Read One Piece"
