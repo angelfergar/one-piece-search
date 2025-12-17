@@ -62,14 +62,11 @@ def send_email(chapter, webs_available):
 if __name__ == "__main__":
 
     wc = WebConfig()
-    webs = ["https://ww1.tcbscansonepiece.com/one-piece-manga"]
-    '''
     webs = ["https://opchapters.com/op-chapter-{chapter}",
             "https://opchapters.com/op-{chapter}",
             "https://ww1.tcbscansonepiece.com/one-piece-manga",
             "https://tcbonepiecechapters.com/mangas/5/one-piece",
             "https://readonepiece.cc/"]
-    '''
     chapter = get_last_chapter()
     webs_available = []
 

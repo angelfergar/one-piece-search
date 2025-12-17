@@ -17,7 +17,7 @@ pipeline {
         }
 	stage('Check OCR') {
     	    steps {
-        	sh 'tesseract --version'
+        	bat 'tesseract --version'
     	    }
 	}
 
