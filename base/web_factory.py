@@ -5,7 +5,7 @@ class WebDriverFactory():
     def get_webdriver(self, base_url):
         options = Options()
         options.headless = True
-        #options.add_argument("--headless")
+        options.add_argument("--headless")
 
         driver = webdriver.Firefox(options=options)
         driver.get(base_url)
