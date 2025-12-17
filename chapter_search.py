@@ -67,6 +67,7 @@ if __name__ == "__main__":
             "https://ww1.tcbscansonepiece.com/one-piece-manga",
             "https://tcbonepiecechapters.com/mangas/5/one-piece",
             "https://readonepiece.cc/"]
+
     chapter = get_last_chapter()
     webs_available = []
 

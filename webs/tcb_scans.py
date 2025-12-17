@@ -50,9 +50,9 @@ class TcbScans(BasePage):
         image = Image.open("full.png")
 
         left = location['x']
-        top = location['y'] + 835
-        right = left + size['width'] + 250
-        bottom = top + size['height'] + 6
+        top = location['y'] + 485
+        right = left + size['width']
+        bottom = top + size['height']
 
         cropped = image.crop((left, top, right, bottom))
         cropped.save("title.png")
