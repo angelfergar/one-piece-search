@@ -5,10 +5,45 @@ from webs.tcb_op import TcbOp
 from webs.read_onepiece import ReadOnePiece
 import smtplib
 import os
+import sys
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from datetime import date
 
 chapter_file = "chapter.txt"
+week_file = "found_week.txt"
+break_week = "break_week.txt"
+
+# Check current week
+def current_week():
+    today = date.today()
+    year, week, _ = today.isocalendar()
+    return f'{year}-W{week}'
+
+# Check if we already found the chapter this week
+def check_week():
+    if not os.path.exists(week_file):
+        return None
+
+    with open(week_file, "r") as file:
+        saved_week = file.read().strip()
+
+    if saved_week == current_week():
+        print(f"Chapter already found this week")
+        sys.exit(0)
+
+# Check if we're on a break week
+def is_break_week():
+    if not os.path.exists(break_week):
+        return False
+
+    with open(break_week, "r") as file:
+        break_info = file.read().strip()
+
+    if break_info == "Yes":
+        return True
+    else:
+        return False
 
 # Email config
 sender_email = os.environ.get("smtp_user", "anfernagar@gmail.com")
@@ -18,7 +53,6 @@ receiver_emails = [r.strip() for r in raw_receivers.split(",") if r.strip()]
 smtp_server = "smtp.gmail.com"
 smtp_port = 587
 
-
 def get_last_chapter():
     if not os.path.exists(chapter_file):
         with open(chapter_file, "w") as file:
@@ -27,17 +61,15 @@ def get_last_chapter():
     with open(chapter_file, "r") as file:
         return file.read().strip()
 
-
 def establish_next_chapter(next_chapter):
     with open(chapter_file, "w") as file:
         file.write(str(next_chapter))
-
 
 def send_email(chapter, webs_available):
     subject = f"New One Piece Chapter {chapter} Available!"
     body = f"Chapter {chapter} is now available!\n\nYou can read it on:\n"
     for web in webs_available:
-        body += f"{web["name"]}: {web["url"]}\n"
+        body += f"{web['name']}: {web['url']}\n"
 
     message = MIMEMultipart()
     message["From"] = sender_email
@@ -58,8 +90,13 @@ def send_email(chapter, webs_available):
     except Exception as e:
         print(f"Failed to send email: {e}")
 
-
 if __name__ == "__main__":
+
+    check_week()
+
+    if is_break_week():
+        print("We're on a break week")
+        sys.exit(0)
 
     wc = WebConfig()
     webs = ["https://opchapters.com/op-chapter-{chapter}",
@@ -115,5 +152,8 @@ if __name__ == "__main__":
         next_chapter = str(int(chapter) + 1)
         establish_next_chapter(next_chapter)
         print(f"Next chapter will be: {next_chapter}")
+
+        with open(week_file, "w") as file:
+            file.write(current_week())
     else:
         print(f"Chapter {chapter} is not available in any web yet. We will keep searching for the One Piece")

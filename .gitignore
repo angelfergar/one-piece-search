@@ -4,4 +4,5 @@
 *.log
 *__pycache__/
 chapter.txt
+found_week.txt
 *.png
