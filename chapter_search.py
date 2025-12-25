@@ -71,12 +71,7 @@ def establish_next_chapter(next_chapter):
     with open(chapter_file, "w") as file:
         file.write(str(next_chapter))
 
-
-def send_email(chapter, webs_available):
-    subject = f"New One Piece Chapter {chapter} Available!"
-    body = f"Chapter {chapter} is now available!\n\nYou can read it on:\n"
-    for web in webs_available:
-        body += f"{web['name']}: {web['url']}\n"
+def send_email(subject, body):
 
     message = MIMEMultipart()
     message["From"] = sender_email
@@ -93,10 +88,24 @@ def send_email(chapter, webs_available):
                 receiver_emails,
                 message.as_string()
             )
-        print(f"Email sent successfully for chapter {chapter}!")
+        print(f"Email sent successfully!")
     except Exception as e:
         print(f"Failed to send email: {e}")
 
+def send_found_email(chapter, webs_available):
+
+    subject = f"New One Piece Chapter {chapter} Available!"
+    body = f"Chapter {chapter} is now available!\n\nYou can read it on:\n"
+    for web in webs_available:
+        body += f"{web['name']}: {web['url']}\n"
+
+    send_email(subject, body)
+
+def send_break_email():
+    subject = "No chapter this week :("
+    body = "Oda is resting this week, we'll continue searching the One Piece after the break."
+
+    send_email(subject, body)
 
 if __name__ == "__main__":
 
@@ -104,6 +113,9 @@ if __name__ == "__main__":
 
     if is_break_week():
         print("We're on a break week")
+        send_break_email()
+        with open(week_file, "w") as file:
+            file.write(current_week())
         sys.exit(0)
 
     wc = WebConfig()
@@ -155,7 +167,7 @@ if __name__ == "__main__":
         for web in webs_available:
             print(web)
 
-        send_email(chapter, webs_available)
+        send_found_email(chapter, webs_available)
 
         next_chapter = str(int(chapter) + 1)
         establish_next_chapter(next_chapter)
