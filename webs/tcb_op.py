@@ -16,10 +16,11 @@ class TcbOp(BasePage):
     _chapter_images = "fixed-ratio" # class
 
     def get_chapter_images(self, chapter):
+        chapters_checked = 3
         # Open the list of chapters
         self.wait_for_element(self._link_to_chapters, locator_type="class", condition="visible")
         list_of_chapters = self.get_elementList(self._link_to_chapters, locator_type="class")
-        for container in list_of_chapters:
+        for container in list_of_chapters[:chapters_checked]:
             title = self.get_element(self._title_list, locator_type="class", parent=container)
             title_text = self.get_text(element=title)
             chapter_found = self.utils.verify_text_contains(chapter, title_text)
