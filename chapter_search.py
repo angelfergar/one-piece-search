@@ -9,16 +9,18 @@ import sys
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import date
-
+    
 chapter_file = "chapter.txt"
 week_file = "found_week.txt"
 break_week = "break_week.txt"
+
 
 # Check current week
 def current_week():
     today = date.today()
     year, week, _ = today.isocalendar()
     return f'{year}-W{week}'
+
 
 # Check if we already found the chapter this week
 def check_week():
@@ -31,6 +33,7 @@ def check_week():
     if saved_week == current_week():
         print(f"Chapter already found this week")
         sys.exit(0)
+
 
 # Check if we're on a break week
 def is_break_week():
@@ -45,6 +48,7 @@ def is_break_week():
     else:
         return False
 
+
 # Email config
 sender_email = os.environ.get("smtp_user", "anfernagar@gmail.com")
 password = os.environ.get("smtp_pass")
@@ -52,6 +56,7 @@ raw_receivers = os.environ.get("op_receivers", "")
 receiver_emails = [r.strip() for r in raw_receivers.split(",") if r.strip()]
 smtp_server = "smtp.gmail.com"
 smtp_port = 587
+
 
 def get_last_chapter():
     if not os.path.exists(chapter_file):
@@ -61,9 +66,11 @@ def get_last_chapter():
     with open(chapter_file, "r") as file:
         return file.read().strip()
 
+
 def establish_next_chapter(next_chapter):
     with open(chapter_file, "w") as file:
         file.write(str(next_chapter))
+
 
 def send_email(chapter, webs_available):
     subject = f"New One Piece Chapter {chapter} Available!"
@@ -89,6 +96,7 @@ def send_email(chapter, webs_available):
         print(f"Email sent successfully for chapter {chapter}!")
     except Exception as e:
         print(f"Failed to send email: {e}")
+
 
 if __name__ == "__main__":
 
