@@ -14,7 +14,6 @@ class AllStar(BasePage):
     _link_chapters = "//div[@class='ast-post-format- blog-layout-4 ast-article-inner']"
     _title_chapters = "//a[@rel='bookmark']"
     _chapter_images = "//div[@class='separator']"
-    _title = "entry-title" # class
 
     def get_chapter_images(self, chapter):
         chapter_listed = False
