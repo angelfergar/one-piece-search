@@ -17,10 +17,11 @@ class AllStar(BasePage):
 
     def get_chapter_images(self, chapter):
         chapter_listed = False
+        chapters_checked = 3
         original_window = self.driver.current_window_handle
         self.wait_for_element(self._link_chapters, condition="visible")
         list_of_titles = self.get_elementList(self._title_chapters)
-        for  i in range(len(list_of_titles)):
+        for  i in range(chapters_checked):
             container = list_of_titles[i]
             title_text = self.get_text(element=container)
             chapter_listed = self.utils.verify_text_contains(chapter, title_text)
