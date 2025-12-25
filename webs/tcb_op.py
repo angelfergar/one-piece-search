@@ -12,7 +12,6 @@ class TcbOp(BasePage):
     # Locators
     _link_to_chapters = "block.border.border-border.bg-card.mb-3.p-3.rounded" # class
     _title_list = "text-lg.font-bold" # class
-
     _chapter_images = "fixed-ratio" # class
 
     def get_chapter_images(self, chapter):
