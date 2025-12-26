@@ -62,8 +62,8 @@ smtp_port = 587
 def get_last_chapter():
     if not os.path.exists(chapter_file):
         with open(chapter_file, "w") as file:
-            file.write("1169")
-        return "1169"
+            file.write("1170")
+        return "1170"
     with open(chapter_file, "r") as file:
         return file.read().strip()
 
