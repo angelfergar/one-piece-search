@@ -26,8 +26,8 @@ class AllStar(BasePage):
         for  i in range(chapters_checked):
             container = list_of_titles[i]
             info_message = list_of_messages[i]
-            print(self.get_text(element=info_message))
-            if info_message:
+            info_text = self.get_text(element=info_message)
+            if info_text != "":
                 continue
             else:
                 title_text = self.get_text(element=container)
