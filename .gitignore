@@ -5,4 +5,5 @@
 *__pycache__/
 chapter.txt
 found_week.txt
+release_week.txt
 *.png

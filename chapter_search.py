@@ -12,11 +12,9 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import date
 
-
-    
 chapter_file = "chapter.txt"
 week_file = "found_week.txt"
-break_file = "break_week.txt"
+release_file = "release_week.txt"
 
 
 # Check current week
@@ -49,16 +47,15 @@ def is_break_week():
     driver_extra.quit()
 
     # Write the break week info
-    if not os.path.exists(break_file):
-        with open(break_file, "w") as file:
+    if not os.path.exists(release_file):
+        with open(release_file, "w") as file:
             file.write(release_week)
-        return False
 
-    with open(break_file, "r") as file:
+    with open(release_file, "r") as file:
         release_info = file.read().strip()
 
     if release_info != release_week:
-        with open(break_file, "w") as file:
+        with open(release_file, "w") as file:
             file.write(release_week)
 
     if release_info != current_week():
