@@ -1,6 +1,5 @@
 from base.base import BasePage
 from utils.utils import Util
-from time import sleep
 
 class AllStar(BasePage):
 

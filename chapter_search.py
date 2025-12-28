@@ -1,26 +1,31 @@
+import time
+
 from web_config import WebConfig
 from webs.opscans import OpScans
 from webs.tcb_scans import TcbScans
 from webs.tcb_op import TcbOp
 from webs.read_onepiece import ReadOnePiece
 from webs.anime_allstar import AllStar
+from webs.manga_plus import MangaPlus
 import smtplib
 import os
 import sys
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import date
+
+
     
 chapter_file = "chapter.txt"
 week_file = "found_week.txt"
-break_week = "break_week.txt"
+break_file = "break_week.txt"
 
 
 # Check current week
 def current_week():
     today = date.today()
     year, week, _ = today.isocalendar()
-    return f'{year}-W{week}'
+    return f'W{week}'
 
 
 # Check if we already found the chapter this week
@@ -38,17 +43,30 @@ def check_week():
 
 # Check if we're on a break week
 def is_break_week():
-    if not os.path.exists(break_week):
+    wc = WebConfig()
+    break_url = "https://mangaplus.shueisha.co.jp/titles/100020"
+    driver_extra = wc.set_up(break_url)
+    release_page = MangaPlus(driver_extra)
+    release_week = release_page.find_break_week()
+    driver_extra.quit()
+
+    # Write the break week info
+    if not os.path.exists(break_file):
+        with open(break_file, "w") as file:
+            file.write(release_week)
         return False
 
-    with open(break_week, "r") as file:
-        break_info = file.read().strip()
+    with open(break_file, "r") as file:
+        release_info = file.read().strip()
 
-    if break_info == "Yes":
+    if release_info != release_week:
+        with open(break_file, "w") as file:
+            file.write(release_week)
+
+    if release_info != current_week():
         return True
     else:
         return False
-
 
 # Email config
 sender_email = os.environ.get("smtp_user", "anfernagar@gmail.com")

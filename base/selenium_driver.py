@@ -21,6 +21,8 @@ class SeleniumDriver():
             return By.CLASS_NAME
         elif locator_type == "link":
             return By.LINK_TEXT
+        elif locator_type == "partial_link":
+            return By.PARTIAL_LINK_TEXT
         elif locator_type == "css":
             return By.CSS_SELECTOR
         else:
