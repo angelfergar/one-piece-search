@@ -5,9 +5,8 @@ class WebDriverFactory():
     def get_webdriver(self, base_url):
         options = Options()
         options.headless = True
-        options.add_argument("--headless")
 
         driver = webdriver.Firefox(options=options)
-        driver.set_window_size(1920, 1080)
+        driver.set_window_size(426, 240)
         driver.get(base_url)
         return driver

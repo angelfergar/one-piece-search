@@ -3,11 +3,8 @@ from utils.utils import Util
 
 class TcbScans(BasePage):
 
-    utils = Util()
-
     def __init__(self, driver):
         super().__init__(driver)
-        self.driver = driver
 
     # Locators
     _link_to_chapters = "post-details" # class
@@ -29,11 +26,11 @@ class TcbScans(BasePage):
             if not chapter_found:
                 title = self.get_element(self._title_list, locator_type="class", parent=container)
                 title_text = self.get_text(element=title)
-                chapter_found = self.utils.verify_text_contains(chapter, title_text)
+                chapter_found = Util.verify_text_contains(chapter, title_text)
                 if not true_updated:
                     updated = self.get_element(self._updated, parent=container)
                     updated_text = self.get_text(element=updated)
-                    true_updated = self.utils.verify_text_contains(self.minutes_text, updated_text)
+                    true_updated = Util.verify_text_contains(self.minutes_text, updated_text)
                     if true_updated:
                         return True
             else:

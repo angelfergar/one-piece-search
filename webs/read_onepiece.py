@@ -4,11 +4,8 @@ from utils.utils import Util
 
 class ReadOnePiece(BasePage):
 
-    utils = Util()
-
     def __init__(self, driver):
         super().__init__(driver)
-        self.driver = driver
 
     # Locators
     _chapter_list = "chapter-list" # ID
@@ -22,7 +19,7 @@ class ReadOnePiece(BasePage):
         for container in current_list[:chapters_checked]:
             title = self.get_element(self._title_chapter, locator_type="class", parent=container)
             title_text = self.get_text(element=title)
-            chapter_found = self.utils.verify_text_contains(chapter, title_text)
+            chapter_found = Util.verify_text_contains(chapter, title_text)
             if chapter_found:
                 return True
             else:

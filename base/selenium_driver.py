@@ -67,7 +67,7 @@ class SeleniumDriver():
         is_displayed = False
         try:
             if locator:
-                element = self.get_elementList(locator, locator_type)
+                element = self.get_element(locator, locator_type)
                 if element is not None:
                     is_displayed = element.is_displayed()
                 else:

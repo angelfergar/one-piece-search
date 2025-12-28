@@ -1,16 +1,13 @@
 from base.base import BasePage
-from utils.utils import Util
 from web_config import WebConfig
 from datetime import datetime
 
 class MangaPlus(BasePage):
 
-    utils = Util()
     wc = WebConfig()
 
     def __init__(self, driver):
         super().__init__(driver)
-        self.driver = driver
 
     # Locators
     _text = "//span[contains(text(), 'próximo capítulo')]"

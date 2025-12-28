@@ -3,11 +3,8 @@ from utils.utils import Util
 
 class AllStar(BasePage):
 
-    utils = Util()
-
     def __init__(self, driver):
         super().__init__(driver)
-        self.driver = driver
 
     # Locators
     _link_chapters = "//div[@class='ast-post-format- blog-layout-4 ast-article-inner']"
@@ -18,7 +15,9 @@ class AllStar(BasePage):
     def get_chapter_images(self, chapter):
         chapter_listed = False
         chapters_checked = 3
+        min_images_required = 10
         original_window = self.driver.current_window_handle
+
         self.wait_for_element(self._link_chapters, condition="visible")
         list_of_titles = self.get_elementList(self._title_chapters)
         list_of_messages = self.get_elementList(self._extra_message)
@@ -30,7 +29,7 @@ class AllStar(BasePage):
                 continue
             else:
                 title_text = self.get_text(element=container)
-                chapter_listed = self.utils.verify_text_contains(chapter, title_text)
+                chapter_listed = Util.verify_text_contains(chapter, title_text)
                 if chapter_listed:
                     self.element_click(element=container)
                     break
@@ -43,7 +42,7 @@ class AllStar(BasePage):
         # Check if there's a reasonable number of pages
         self.wait_for_element(self._chapter_images,condition="visible")
         images_list = self.get_elementList(self._chapter_images)
-        if len(images_list) > 10:
+        if len(images_list) > min_images_required:
             return True
 
         return False

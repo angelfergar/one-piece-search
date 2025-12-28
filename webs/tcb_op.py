@@ -3,11 +3,8 @@ from utils.utils import Util
 
 class TcbOp(BasePage):
 
-    utils = Util()
-
     def __init__(self, driver):
         super().__init__(driver)
-        self.driver = driver
 
     # Locators
     _link_to_chapters = "block.border.border-border.bg-card.mb-3.p-3.rounded" # class
@@ -22,7 +19,7 @@ class TcbOp(BasePage):
         for container in list_of_chapters[:chapters_checked]:
             title = self.get_element(self._title_list, locator_type="class", parent=container)
             title_text = self.get_text(element=title)
-            chapter_found = self.utils.verify_text_contains(chapter, title_text)
+            chapter_found = Util.verify_text_contains(chapter, title_text)
             if chapter_found:
                 return True
             else:

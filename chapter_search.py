@@ -1,5 +1,3 @@
-import time
-
 from web_config import WebConfig
 from webs.opscans import OpScans
 from webs.tcb_scans import TcbScans
