@@ -21,11 +21,12 @@ class AllStar(BasePage):
         self.wait_for_element(self._link_chapters, condition="visible")
         list_of_titles = self.get_elementList(self._title_chapters)
         list_of_messages = self.get_elementList(self._extra_message)
-        for  i in range(chapters_checked):
+        for i in range(chapters_checked):
             container = list_of_titles[i]
             info_message = list_of_messages[i]
             info_text = self.get_text(element=info_message)
             if info_text != "":
+                print(info_text)
                 continue
             else:
                 title_text = self.get_text(element=container)
