@@ -19,7 +19,7 @@ class TcbOp(BasePage):
         for container in list_of_chapters[:chapters_checked]:
             title = self.get_element(self._title_list, locator_type="class", parent=container)
             title_text = self.get_text(element=title)
-            chapter_found = Util.verify_text_contains(chapter, title_text)
+            chapter_found = Util.verify_text_contains(self, chapter, title_text)
             if chapter_found:
                 return True
             else:

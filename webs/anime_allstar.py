@@ -29,7 +29,7 @@ class AllStar(BasePage):
                 continue
             else:
                 title_text = self.get_text(element=container)
-                chapter_listed = Util.verify_text_contains(chapter, title_text)
+                chapter_listed = Util.verify_text_contains(self, actual_text=chapter, expected_text=title_text)
                 if chapter_listed:
                     self.element_click(element=container)
                     break

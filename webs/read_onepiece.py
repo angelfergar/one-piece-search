@@ -19,7 +19,7 @@ class ReadOnePiece(BasePage):
         for container in current_list[:chapters_checked]:
             title = self.get_element(self._title_chapter, locator_type="class", parent=container)
             title_text = self.get_text(element=title)
-            chapter_found = Util.verify_text_contains(chapter, title_text)
+            chapter_found = Util.verify_text_contains(self, actual_text=chapter, expected_text=title_text)
             if chapter_found:
                 return True
             else:
