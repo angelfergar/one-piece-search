@@ -16,8 +16,7 @@ pipeline {
 
         stage('Prepare Python Env') {
             steps {
-                dir('op-chapter-search') { 
-                    // Step 1: Create virtualenv if it doesn't exist
+	    	// Step 1: Create virtualenv if it doesn't exist
                     bat '''
                     if not exist venv (
                         echo Creating virtualenv...
@@ -29,15 +28,13 @@ pipeline {
                     bat '''
                     venv\\Scripts\\python.exe -m pip install --upgrade pip
                     venv\\Scripts\\python.exe -m pip install -r requirements.txt
-                    '''
-                }
+                    '''    
             }
         }
 
         stage('Check Chapter') {
             steps {
-                dir('op-chapter-search') {
-                    withCredentials([
+            	withCredentials([
                         string(credentialsId: 'gmail-creds', variable: 'smtp_pass'),
                         string(credentialsId: 'op_receivers', variable: 'op_receivers')
                     ]) {
@@ -46,8 +43,7 @@ pipeline {
                         set smtp_pass=%smtp_pass%
                         set op_receivers=%op_receivers%
                         venv\\Scripts\\python.exe chapter_search.py
-                        '''
-                    }
+                        '''        
                 }
             }
         }
