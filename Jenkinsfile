@@ -17,35 +17,18 @@ pipeline {
         stage('Prepare Python Env') {
             steps {
                 dir('op-chapter-search') { 
+                    // Step 1: Create virtualenv if it doesn't exist
                     bat '''
                     if not exist venv (
                         echo Creating virtualenv...
                         python -m venv venv
                     )
+                    '''
 
-                    call venv\\Scripts\\activate.bat
-
-                    rem Calculate hash of requirements.txt
-                    certutil -hashfile requirements.txt SHA256 > requirements.hash.tmp
-                    findstr /v "hash" requirements.hash.tmp > requirements.hash
-
-                    rem Compare hashes
-                    if not exist .requirements.hash (
-                        echo Installing dependencies (first run)...
-                        python -m pip install -r requirements.txt
-                        copy requirements.hash .requirements.hash
-                    ) else (
-                        fc .requirements.hash requirements.hash >nul
-                        if errorlevel 1 (
-                            echo Requirements changed, reinstalling...
-                            python -m pip install -r requirements.txt
-                            copy requirements.hash .requirements.hash
-                        ) else (
-                            echo Requirements unchanged, skipping install.
-                        )
-                    )
-
-                    del requirements.hash.tmp
+                    // Step 2: Upgrade pip and install requirements using venv's Python
+                    bat '''
+                    venv\\Scripts\\python.exe -m pip install --upgrade pip
+                    venv\\Scripts\\python.exe -m pip install -r requirements.txt
                     '''
                 }
             }
@@ -58,11 +41,11 @@ pipeline {
                         string(credentialsId: 'gmail-creds', variable: 'smtp_pass'),
                         string(credentialsId: 'op_receivers', variable: 'op_receivers')
                     ]) {
+                        // Run Python script using venv's Python directly
                         bat '''
-                        call venv\\Scripts\\activate.bat
                         set smtp_pass=%smtp_pass%
                         set op_receivers=%op_receivers%
-                        python chapter_search.py
+                        venv\\Scripts\\python.exe chapter_search.py
                         '''
                     }
                 }
