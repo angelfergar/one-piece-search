@@ -1,6 +1,7 @@
 pipeline {
     agent {
         node {
+	    label 'op-search'
             customWorkspace 'C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\op-chapter-search'
         }
     }
