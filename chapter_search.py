@@ -57,6 +57,7 @@ def is_break_week():
     if release_info != release_week:
         with open(release_file, "w") as file:
             file.write(release_week)
+            release_info = release_week
 
     if release_info != current_week():
         return True
