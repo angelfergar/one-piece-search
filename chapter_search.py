@@ -3,7 +3,6 @@ from webs.opscans import OpScans
 from webs.tcb_scans import TcbScans
 from webs.tcb_op import TcbOp
 from webs.read_onepiece import ReadOnePiece
-from webs.anime_allstar import AllStar
 from webs.manga_plus import MangaPlus
 import smtplib
 import os
@@ -138,8 +137,7 @@ if __name__ == "__main__":
             "https://opchapters.com/op-{chapter}",
             "https://ww1.tcbscansonepiece.com/one-piece-manga",
             "https://tcbonepiecechapters.com/mangas/5/one-piece",
-            "https://readonepiece.cc/",
-            "https://animeallstar30.com/category/one-piece/"]
+            "https://readonepiece.cc/"]
     chapter = get_last_chapter()
     webs_available = []
 
@@ -159,9 +157,6 @@ if __name__ == "__main__":
             elif "readonepiece" in url:
                 page = ReadOnePiece(driver)
                 web_name = "Read One Piece"
-            elif "animeallstar" in url:
-                page = AllStar(driver)
-                web_name = "Anime All Star"
             else:
                 print(f"{url} is not supported")
                 driver.quit()
