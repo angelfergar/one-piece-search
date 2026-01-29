@@ -134,15 +134,12 @@ if __name__ == "__main__":
         sys.exit(0)
 
     wc = WebConfig()
-    webs = ["https://animeallstar30.com/category/one-piece/"]
-    '''
     webs = ["https://opchapters.com/op-chapter-{chapter}",
             "https://opchapters.com/op-{chapter}",
             "https://ww1.tcbscansonepiece.com/one-piece-manga",
             "https://tcbonepiecechapters.com/mangas/5/one-piece",
             "https://readonepiece.cc/",
             "https://animeallstar30.com/category/one-piece/"]
-            '''
     chapter = get_last_chapter()
     webs_available = []
 
