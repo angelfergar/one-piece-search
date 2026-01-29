@@ -159,9 +159,9 @@ if __name__ == "__main__":
             elif "readonepiece" in url:
                 page = ReadOnePiece(driver)
                 web_name = "Read One Piece"
-            elif "animeallstar" in url:
+            '''elif "animeallstar" in url:
                 page = AllStar(driver)
-                web_name = "Anime All Star"
+                web_name = "Anime All Star"'''
             else:
                 print(f"{url} is not supported")
                 driver.quit()
