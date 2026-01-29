@@ -32,6 +32,12 @@ pipeline {
             }
         }
 
+	stage('Check OCR') {
+    	    steps {
+        	bat '"C:\\Program Files\\Tesseract-OCR\\tesseract.exe" --version'
+    	    }
+	}
+
         stage('Check Chapter') {
             steps {
             	withCredentials([
