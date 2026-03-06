@@ -1,3 +1,5 @@
+import time
+
 from base.base import BasePage
 from utils.utils import Util
 from PIL import Image
@@ -34,6 +36,7 @@ class AllStar(BasePage):
     _extra_message = "//div[@class='ast-excerpt-container ast-blog-single-element']"
     _title_chapters = "//a[@rel='bookmark']"
     _chapter_images = "//div[@class='separator']"
+    _new_chapter_images = "//div[@class='entry-content clear']/p"
 
     def ocr_chapter_title(self):
 
@@ -63,14 +66,14 @@ class AllStar(BasePage):
     def get_chapter_images(self, chapter):
         chapter_listed = False
         chapters_checked = 3
-        min_images_required = 10
+        min_images_required = 5
         original_window = self.driver.current_window_handle
         language_warning = "(EN JAPONES)"
 
         self.wait_for_element(self._link_chapters, condition="visible")
         # Check the thumbnail
         in_japanese = self.ocr_chapter_title()
-        match_score = fuzz.partial_ratio(self.normalize(in_japanese), self.normalize(language_warning))
+        match_score = fuzz.ratio(self.normalize(in_japanese), self.normalize(language_warning))
         print(f'{in_japanese} vs {language_warning}')
         print(f'Score: {match_score}')
 
@@ -79,8 +82,10 @@ class AllStar(BasePage):
         list_of_messages = self.get_elementList(self._extra_message)
         for i in range(chapters_checked):
             container = list_of_titles[i]
-            info_message = list_of_messages[i]
-            info_text = self.get_text(element=info_message)
+            info_text = ""
+            if list_of_messages:
+                info_message = list_of_messages[i]
+                info_text = self.get_text(element=info_message)
             if info_text != "" or match_score > 75:
                 print(info_text)
                 print("This link won't be opened as it contains an old chapter or a new one not translated")
@@ -98,9 +103,14 @@ class AllStar(BasePage):
                 self.driver.switch_to.window(handle)
                 break
         # Check if there's a reasonable number of pages
-        self.wait_for_element(self._chapter_images,condition="visible")
-        images_list = self.get_elementList(self._chapter_images)
-        if len(images_list) > min_images_required:
+        element = self.wait_for_element(locator=self._chapter_images, condition="click")
+        if element:
+            images_list = self.get_elementList(self._chapter_images)
+        else:
+            self.wait_for_element(locator=self._new_chapter_images, condition="click")
+            images_list = self.get_elementList(self._new_chapter_images)
+
+        if images_list and len(images_list) > min_images_required:
             return True
 
         return False
