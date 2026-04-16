@@ -12,9 +12,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import date
 
-chapter_file = "chapter.txt"
 week_file = "found_week.txt"
-release_file = "release_week.txt"
 
 
 # Check current week
@@ -46,20 +44,7 @@ def is_break_week():
     release_week = release_page.find_break_week()
     driver_extra.quit()
 
-    # Write the break week info
-    if not os.path.exists(release_file):
-        with open(release_file, "w") as file:
-            file.write(release_week)
-
-    with open(release_file, "r") as file:
-        release_info = file.read().strip()
-
-    if release_info != release_week:
-        with open(release_file, "w") as file:
-            file.write(release_week)
-            release_info = release_week
-
-    if release_info != current_week():
+    if release_week != current_week():
         return True
     else:
         return False
@@ -74,17 +59,14 @@ smtp_port = 587
 
 
 def get_last_chapter():
-    if not os.path.exists(chapter_file):
-        with open(chapter_file, "w") as file:
-            file.write("1176")
-        return "1176"
-    with open(chapter_file, "r") as file:
-        return file.read().strip()
+    wc = WebConfig()
+    break_url = "https://mangaplus.shueisha.co.jp/titles/100020"
+    driver_extra = wc.set_up(break_url)
+    release_page = MangaPlus(driver_extra)
+    release_chapter = release_page.find_chapter()
+    driver_extra.quit()
 
-
-def establish_next_chapter(next_chapter):
-    with open(chapter_file, "w") as file:
-        file.write(str(next_chapter))
+    return str(release_chapter)
 
 def send_email(subject, body):
 
@@ -113,6 +95,8 @@ def send_found_email(chapter, webs_available):
     body = f"Chapter {chapter} is now available!\n\nYou can read it on:\n"
     for web in webs_available:
         body += f"{web['name']}: {web['url']}\n"
+    body += (f"La actualización de Windows rompió mi Firefox, y de regalo el job de Jenkins. Disculpen.\nHe aprovechado y he metido que el número del capítulo"
+             f"se saque de forma dinámica y he refactorizado el vaineo.\nBesis!")
 
     send_email(subject, body)
 
@@ -188,7 +172,6 @@ if __name__ == "__main__":
         send_found_email(chapter, webs_available)
 
         next_chapter = str(int(chapter) + 1)
-        establish_next_chapter(next_chapter)
         print(f"Next chapter will be: {next_chapter}")
 
         with open(week_file, "w") as file:

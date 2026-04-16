@@ -11,6 +11,7 @@ class MangaPlus(BasePage):
 
     # Locators
     _text = "//span[contains(text(), 'próximo capítulo')]"
+    _chapter = "//p[@class='ChapterListItem-module_name_3h9dj']"
 
     def find_break_week(self):
         self.wait_for_element(locator=self._text, condition="visible")
@@ -20,5 +21,14 @@ class MangaPlus(BasePage):
         release_format = datetime.strptime(date_release, "%A, %b %d, %H:%M")
         year, week, _ = release_format.isocalendar()
         return f'W{week}'
+
+    def find_chapter(self):
+        self.wait_for_element(locator=self._chapter,condition="visible")
+        chapter_number = self.get_elementList(locator=self._chapter)
+
+        chapter_text = self.get_text(element=chapter_number[-1])
+        chapter = chapter_text[1:]
+        return (int(chapter) + 1)
+
 
 
