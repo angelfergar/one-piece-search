@@ -13,6 +13,7 @@ from email.mime.multipart import MIMEMultipart
 from datetime import date
 from utils.db_management import init_db, check_chapter_found, save_chapter, save_links, get_all_subscribers, add_subscriber
 
+init_db()
 
 for email in os.environ.get("op_receivers", "").split(","):
     add_subscriber(email)
