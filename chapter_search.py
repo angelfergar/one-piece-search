@@ -11,9 +11,12 @@ import sys
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import date
+from utils.db_management import init_db, check_chapter_found, save_chapter, save_links, get_all_subscribers, add_subscriber
 
-week_file = "found_week.txt"
+init_db()
 
+for email in os.environ.get("op_receivers", ""):
+    add_subscriber(email)
 
 # Check current week
 def current_week():
@@ -24,16 +27,9 @@ def current_week():
 
 # Check if we already found the chapter this week
 def check_week():
-    if not os.path.exists(week_file):
-        return None
-
-    with open(week_file, "r") as file:
-        saved_week = file.read().strip()
-
-    if saved_week == current_week():
+    if check_chapter_found(current_week()):
         print(f"Chapter already found this week")
         sys.exit(0)
-
 
 # Check if we're on a break week
 def is_break_week():
@@ -49,15 +45,6 @@ def is_break_week():
     else:
         return False
 
-# Email config
-sender_email = os.environ.get("smtp_user", "anfernagar@gmail.com")
-password = os.environ.get("smtp_pass")
-raw_receivers = os.environ.get("op_receivers", "")
-receiver_emails = [r.strip() for r in raw_receivers.split(",") if r.strip()]
-smtp_server = "smtp.gmail.com"
-smtp_port = 587
-
-
 def get_last_chapter():
     wc = WebConfig()
     break_url = "https://mangaplus.shueisha.co.jp/titles/100020"
@@ -68,11 +55,18 @@ def get_last_chapter():
 
     return str(release_chapter)
 
+# Email config
+sender_email = os.environ.get("smtp_user", "anfernagar@gmail.com")
+password = os.environ.get("smtp_pass")
+receiver_emails = get_all_subscribers()
+smtp_server = "smtp.gmail.com"
+smtp_port = 587
+
 def send_email(subject, body):
 
     message = MIMEMultipart()
     message["From"] = sender_email
-    message["To"] = "OP Fans"
+    message["To"] = ", ".join(receiver_emails)
     message["Subject"] = subject
     message.attach(MIMEText(body, "plain"))
 
@@ -113,8 +107,6 @@ if __name__ == "__main__":
     if is_break_week():
         print("We're on a break week")
         send_break_email()
-        with open(week_file, "w") as file:
-            file.write(current_week())
         sys.exit(0)
 
     wc = WebConfig()
@@ -165,6 +157,7 @@ if __name__ == "__main__":
             driver.quit()
 
     if webs_available:
+
         print(f"CHAPTER {chapter} IS ALREADY OUT!! Here are the webs where you can read it.")
         for web in webs_available:
             print(web)
@@ -174,7 +167,8 @@ if __name__ == "__main__":
         next_chapter = str(int(chapter) + 1)
         print(f"Next chapter will be: {next_chapter}")
 
-        with open(week_file, "w") as file:
-            file.write(current_week())
+        chapter_id = save_chapter(chapter, current_week())
+        save_links(chapter_id, webs_available)
+
     else:
         print(f"Chapter {chapter} is not available in any web yet. We will keep searching for the One Piece")
