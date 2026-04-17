@@ -15,7 +15,7 @@ from utils.db_management import init_db, check_chapter_found, save_chapter, save
 
 init_db()
 
-for email in os.environ.get("op_receivers", ""):
+for email in os.environ.get("op_receivers", "").split(","):
     add_subscriber(email)
 
 # Check current week
