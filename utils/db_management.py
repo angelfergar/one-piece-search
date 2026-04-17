@@ -1,6 +1,6 @@
 import sqlite3
 
-db_name = r"C:\ProgramData\Jenkins\.jenkins\workspace\op-chapter-search\onepiece.db"
+db_name = r"C:\jenkins_data\onepiece.db"
 
 def get_connection():
     return sqlite3.connect(db_name)
