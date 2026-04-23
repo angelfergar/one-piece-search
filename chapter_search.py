@@ -15,45 +15,22 @@ from utils.db_management import init_db, check_chapter_found, save_chapter, save
 
 init_db()
 
-for email in os.environ.get("op_receivers", "").split(","):
+# For new mails
+'''for email in os.environ.get("op_receivers", "").split(","):
     add_subscriber(email)
+'''
 
-# Check current week
-def current_week():
-    today = date.today()
-    year, week, _ = today.isocalendar()
-    return f'W{week}'
+# Websites configuration
+web_config = [
+    {"url": "https://opchapters.com/op-chapter-{chapter}", "clss": OpScans, "web_name": "OP Scans"},
+    {"url": "https://opchapters.com/op-{chapter}", "clss": OpScans, "web_name": "OP Scans"},
+    {"url": "https://ww1.tcbscansonepiece.com/one-piece-manga", "clss": TcbScans, "web_name": "TCB Scans"},
+    {"url": "https://tcbonepiecechapters.com/mangas/5/one-piece", "clss": TcbOp, "web_name": "TCB One Piece"},
+    {"url": "https://readonepiece.cc/", "clss": ReadOnePiece, "web_name": "Read One Piece"},
+    {"url": "https://animeallstar30.com/category/one-piece/", "clss": AllStar, "web_name": "Anime All Star"}
+]
 
-
-# Check if we already found the chapter this week
-def check_week():
-    if check_chapter_found(current_week()):
-        print(f"Chapter already found this week")
-        sys.exit(0)
-
-# Check if we're on a break week
-def is_break_week():
-    wc = WebConfig()
-    break_url = "https://mangaplus.shueisha.co.jp/titles/100020"
-    driver_extra = wc.set_up(break_url)
-    release_page = MangaPlus(driver_extra)
-    release_week = release_page.find_break_week()
-    driver_extra.quit()
-
-    if release_week != current_week():
-        return True
-    else:
-        return False
-
-def get_last_chapter():
-    wc = WebConfig()
-    break_url = "https://mangaplus.shueisha.co.jp/titles/100020"
-    driver_extra = wc.set_up(break_url)
-    release_page = MangaPlus(driver_extra)
-    release_chapter = release_page.find_chapter()
-    driver_extra.quit()
-
-    return str(release_chapter)
+mangaplus_url = "https://mangaplus.shueisha.co.jp/titles/100020"
 
 # Email config
 sender_email = os.environ.get("smtp_user", "anfernagar@gmail.com")
@@ -62,8 +39,32 @@ receiver_emails = get_all_subscribers()
 smtp_server = "smtp.gmail.com"
 smtp_port = 587
 
-def send_email(subject, body):
+# Check current week
+def current_week():
+    today = date.today()
+    year, week, _ = today.isocalendar()
+    return f'W{week}'
 
+# Check if we already found the chapter this week
+def check_week():
+    if check_chapter_found(current_week()):
+        print(f"Chapter already found this week")
+        sys.exit(0)
+
+# Check MangaPlus for release date and chapter number
+def get_mangaplus_info():
+    wc = WebConfig()
+    driver = wc.set_up(mangaplus_url)
+    try:
+        page = MangaPlus(driver)
+        is_break = page.find_break_week() != current_week()
+        chapter = str(page.find_chapter())
+        return {"is_break": is_break, "chapter": chapter}
+    finally:
+        driver.quit()
+
+# Email information
+def send_email(subject, body):
     message = MIMEMultipart()
     message["From"] = sender_email
     message["To"] = ", ".join(receiver_emails)
@@ -84,80 +85,51 @@ def send_email(subject, body):
         print(f"Failed to send email: {e}")
 
 def send_found_email(chapter, webs_available):
-
     subject = f"New One Piece Chapter {chapter} Available!"
     body = f"Chapter {chapter} is now available!\n\nYou can read it on:\n"
     for web in webs_available:
-        body += f"{web['name']}: {web['url']}\n"
-    body += (f"La actualización de Windows rompió mi Firefox, y de regalo el job de Jenkins. Disculpen.\nHe aprovechado y he metido que el número del capítulo"
-             f"se saque de forma dinámica y he refactorizado el vaineo.\nBesis!")
-
+        body += f"{web['name']}: {web['url']}"
     send_email(subject, body)
 
 def send_break_email():
     subject = "No chapter this week :("
     body = "Oda is resting this week, we'll continue searching the One Piece after the break."
-
     send_email(subject, body)
 
+# Main logic
 if __name__ == "__main__":
 
     check_week()
 
-    if is_break_week():
+    mangaplus_info = get_mangaplus_info()
+
+    if mangaplus_info["is_break"]:
         print("We're on a break week")
         send_break_email()
         sys.exit(0)
 
+    chapter = mangaplus_info["chapter"]
+
     wc = WebConfig()
-    webs = ["https://opchapters.com/op-chapter-{chapter}",
-            "https://opchapters.com/op-{chapter}",
-            "https://ww1.tcbscansonepiece.com/one-piece-manga",
-            "https://tcbonepiecechapters.com/mangas/5/one-piece",
-            "https://readonepiece.cc/",
-            "https://animeallstar30.com/category/one-piece/"]
-    chapter = get_last_chapter()
     webs_available = []
 
-    for web in webs:
-        url = web.format(chapter=chapter)
+    for web in web_config:
+        url = web["url"].format(chapter=chapter)
         driver = wc.set_up(url)
         try:
-            if "opchapters" in url:
-                page = OpScans(driver)
-                web_name = "OP Scans"
-            elif "tcbscans" in url:
-                page = TcbScans(driver)
-                web_name = "TCB Scans"
-            elif "tcbonepiece" in url:
-                page = TcbOp(driver)
-                web_name = "TCB One Piece"
-            elif "readonepiece" in url:
-                page = ReadOnePiece(driver)
-                web_name = "Read One Piece"
-            elif "animeallstar" in url:
-                page = AllStar(driver)
-                web_name = "Anime All Star"
-            else:
-                print(f"{url} is not supported")
-                driver.quit()
-                continue
-
+            page = web["clss"](driver)
             images = page.get_chapter_images(chapter)
 
             if images:
-                webs_available.append({"name": web_name, "url": url})
+                webs_available.append({"name": web["web_name"], "url": url})
             else:
                 print(f"NOT LUCKY: Chapter {chapter} NOT available in: {url}")
-
         except Exception as e:
             print(f"Error while checking {url}: {e}")
-
         finally:
             driver.quit()
 
     if webs_available:
-
         print(f"CHAPTER {chapter} IS ALREADY OUT!! Here are the webs where you can read it.")
         for web in webs_available:
             print(web)

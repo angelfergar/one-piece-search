@@ -5,34 +5,28 @@ class TcbScans(BasePage):
 
     def __init__(self, driver):
         super().__init__(driver)
+        util = Util()
 
     # Locators
-    _link_to_chapters = "post-details" # class
-    _title_list = "post-title" # class
-    _button_to_chapter = "more-link.button" # class
+    _link_to_chapters_class = "post-details"
+    _title_list_class = "post-title"
     _updated = "(//div[@class='post-meta clearfix'])/span"
 
     minutes_text = "minutes ago"
 
-
     def get_chapter_images(self, chapter):
-        chapter_found = False
-        true_updated = False
         # Open the list of chapters
-        self.wait_for_element(self._link_to_chapters, locator_type="class", condition="visible")
-        list_of_chapters = self.get_elementList(self._link_to_chapters, locator_type="class")
+        self.wait_for_element(self._link_to_chapters_class, locator_type="class", condition="visible")
+        list_of_chapters = self.get_elementList(self._link_to_chapters_class, locator_type="class")
 
         for container in list_of_chapters:
-            if not chapter_found:
-                title = self.get_element(self._title_list, locator_type="class", parent=container)
-                title_text = self.get_text(element=title)
-                chapter_found = Util.verify_text_contains(self, chapter, title_text)
-                if not true_updated:
-                    updated = self.get_element(self._updated, parent=container)
-                    updated_text = self.get_text(element=updated)
-                    true_updated = Util.verify_text_contains(self, self.minutes_text, updated_text)
-                    if true_updated:
-                        return True
-            else:
-                continue
+            title = self.get_element(self._title_list_class, locator_type="class", parent=container)
+            title_text = self.get_text(element=title)
+
+            if Util.verify_text_contains(chapter, title_text):
+                updated = self.get_element(self._updated, parent=container)
+                updated_text = self.get_text(element=updated)
+                if Util.verify_text_contains(self.minutes_text, updated_text):
+                    return True
+
         return False

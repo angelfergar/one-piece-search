@@ -1,7 +1,11 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import *
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    ElementNotVisibleException,
+    ElementNotSelectableException
+)
 
 # Generic methods for Selenium
 class SeleniumDriver():
@@ -9,25 +13,22 @@ class SeleniumDriver():
     def __init__(self, driver):
         self.driver = driver
 
+    _by_map = {
+        "id": By.ID,
+        "xpath": By.XPATH,
+        "name": By.NAME,
+        "class": By.CLASS_NAME,
+        "link": By.LINK_TEXT,
+        "partial_link": By.PARTIAL_LINK_TEXT,
+        "css": By.CSS_SELECTOR,
+    }
+
     def get_by_type(self, locator_type):
         locator_type = locator_type.lower()
-        if locator_type == "id":
-            return By.ID
-        elif locator_type == "xpath":
-            return By.XPATH
-        elif locator_type == "name":
-            return By.NAME
-        elif locator_type == "class":
-            return By.CLASS_NAME
-        elif locator_type == "link":
-            return By.LINK_TEXT
-        elif locator_type == "partial_link":
-            return By.PARTIAL_LINK_TEXT
-        elif locator_type == "css":
-            return By.CSS_SELECTOR
-        else:
+        by = self._by_map.get(locator_type.lower())
+        if by is None:
             print(f"Locator type: {locator_type} not found")
-        return False
+        return by
 
     def get_element(self, locator, locator_type="xpath", element=None, parent=None):
         try:
@@ -74,10 +75,10 @@ class SeleniumDriver():
                     print(f"Element not displayed with locator: {locator} and locatorType: {locator_type}")
                 return is_displayed
         except:
-            self.log.error(f"Element not found with locator: {locator} and locatorType: {locator_type}")
+            print(f"Element not found with locator: {locator} and locatorType: {locator_type}")
             return False
 
-    def wait_for_element(self, locator, locator_type="xpath", condition="present",timeout=10, poll_frequency=0.5, element=None):
+    def wait_for_element(self, locator, locator_type="xpath", condition="present", timeout=10, poll_frequency=0.5, element=None):
         """
         List of conditions:
         1. present  - presence_of_element_located

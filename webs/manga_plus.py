@@ -4,8 +4,6 @@ from datetime import datetime
 
 class MangaPlus(BasePage):
 
-    wc = WebConfig()
-
     def __init__(self, driver):
         super().__init__(driver)
 
@@ -17,7 +15,12 @@ class MangaPlus(BasePage):
         self.wait_for_element(locator=self._text, condition="visible")
         release_date = self.get_element(locator=self._text)
         release_text = self.get_text(element=release_date)
-        date_release = release_text.split("el")[1].strip()
+
+        parts = release_text.split("el")[1]
+        if len(parts) < 2:
+            raise ValueError(f"Format not supported for MangaPlus date: '{release_text}'")
+        date_release = parts[1].strip()
+
         release_format = datetime.strptime(date_release, "%A, %b %d, %H:%M")
         year, week, _ = release_format.isocalendar()
         return f'W{week}'
@@ -27,8 +30,12 @@ class MangaPlus(BasePage):
         chapter_number = self.get_elementList(locator=self._chapter)
 
         chapter_text = self.get_text(element=chapter_number[-1])
+
+        if not chapter_text.startswith("#"):
+            raise ValueError(f"Format not supported for chapter number: '{chapter_text}")
+
         chapter = chapter_text[1:]
-        return (int(chapter) + 1)
+        return int(chapter) + 1
 
 
 
