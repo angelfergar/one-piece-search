@@ -59,7 +59,10 @@ def get_mangaplus_info():
         page = MangaPlus(driver)
         is_break = page.find_break_week() != current_week()
         chapter = str(page.find_chapter())
-        return {"is_break": is_break, "chapter": chapter}
+        week_number = int(page.find_break_week().split("W")[1])
+        current_number = int(current_week().split("W")[1])
+        weeks_wait = week_number - current_number
+        return {"is_break": is_break, "chapter": chapter, "wait": weeks_wait}
     finally:
         driver.quit()
 
@@ -91,9 +94,17 @@ def send_found_email(chapter, webs_available):
         body += f"{web['name']}: {web['url']}"
     send_email(subject, body)
 
-def send_break_email():
+def send_break_email(weeks):
     subject = "No chapter this week :("
-    body = "Oda is resting this week, we'll continue searching the One Piece after the break."
+    body = ""
+    if weeks > 1:
+        body = f"Oda is resting this week, we'll continue searching the One Piece after a {weeks} weeks break."
+    elif weeks == 1:
+        body = f"Oda is resting this week, we'll continue searching the One Piece after a {weeks} week break."
+    else:
+        print(f"The number of weeks is not possible: {weeks}")
+
+    print(body)
     send_email(subject, body)
 
 # Main logic
@@ -104,8 +115,7 @@ if __name__ == "__main__":
     mangaplus_info = get_mangaplus_info()
 
     if mangaplus_info["is_break"]:
-        print("We're on a break week")
-        send_break_email()
+        send_break_email(mangaplus_info["wait"])
         sys.exit(0)
 
     chapter = mangaplus_info["chapter"]
