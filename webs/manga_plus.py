@@ -16,11 +16,10 @@ class MangaPlus(BasePage):
         release_date = self.get_element(locator=self._text)
         release_text = self.get_text(element=release_date)
 
-        parts = release_text.split("el")[1]
+        parts = release_text.split("el")
         if len(parts) < 2:
             raise ValueError(f"Format not supported for MangaPlus date: '{release_text}'")
         date_release = parts[1].strip()
-
         release_format = datetime.strptime(date_release, "%A, %b %d, %H:%M")
         year, week, _ = release_format.isocalendar()
         return f'W{week}'
