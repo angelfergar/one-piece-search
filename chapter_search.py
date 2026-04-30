@@ -116,6 +116,7 @@ if __name__ == "__main__":
 
     if mangaplus_info["is_break"]:
         send_break_email(mangaplus_info["wait"])
+        save_chapter(None, current_week())
         sys.exit(0)
 
     chapter = mangaplus_info["chapter"]

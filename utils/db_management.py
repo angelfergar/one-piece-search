@@ -29,7 +29,7 @@ def init_db():
             """
             CREATE TABLE IF NOT EXISTS chapters (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            chapter_number INTEGER NOT NULL,
+            chapter_number INTEGER,
             week_found TEXT NOT NULL,
             found_at TIME DEFAULT CURRENT_TIMESTAMP)
             """
