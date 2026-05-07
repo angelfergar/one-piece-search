@@ -24,7 +24,7 @@ init_db()
 web_config = [
     {"url": "https://opchapters.com/op-chapter-{chapter}", "clss": OpScans, "web_name": "OP Scans"},
     {"url": "https://opchapters.com/op-{chapter}", "clss": OpScans, "web_name": "OP Scans"},
-    {"url": "https://ww1.tcbscansonepiece.com/one-piece-manga", "clss": TcbScans, "web_name": "TCB Scans"},
+    # {"url": "https://ww1.tcbscansonepiece.com/one-piece-manga", "clss": TcbScans, "web_name": "TCB Scans"},
     {"url": "https://tcbonepiecechapters.com/mangas/5/one-piece", "clss": TcbOp, "web_name": "TCB One Piece"},
     {"url": "https://readonepiece.cc/", "clss": ReadOnePiece, "web_name": "Read One Piece"},
     {"url": "https://animeallstar30.com/category/one-piece/", "clss": AllStar, "web_name": "Anime All Star"}
