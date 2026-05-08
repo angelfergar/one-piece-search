@@ -1,5 +1,4 @@
 from base.base import BasePage
-from web_config import WebConfig
 from datetime import datetime
 
 class MangaPlus(BasePage):
