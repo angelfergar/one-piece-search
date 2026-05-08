@@ -8,6 +8,7 @@ class SeleniumMocks:
         self.get_element_list = mocker.patch.object(SeleniumDriver, "get_elementList")
         self.get_text = mocker.patch.object(SeleniumDriver, "get_text")
         self.get_element = mocker.patch.object(SeleniumDriver, "get_element")
+        self.element_click = mocker.patch.object(SeleniumDriver, "element_click")
 
 # Fixtures
 @pytest.fixture
