@@ -1,6 +1,5 @@
 import pytest
 from base.selenium_driver import SeleniumDriver
-from webs.manga_plus import MangaPlus
 
 # Class Helpers
 class SeleniumMocks:
@@ -12,12 +11,17 @@ class SeleniumMocks:
 
 # Fixtures
 @pytest.fixture
-def manga_plus(mocker):
-    mocker.patch.object(MangaPlus, "__init__", lambda self, d: None)
-    page = MangaPlus.__new__(MangaPlus)
-    page.driver = mocker.MagicMock()
-    return page
-
-@pytest.fixture
 def mock_selenium(mocker):
     return SeleniumMocks(mocker)
+
+@pytest.fixture
+# For instantiate each Web
+def web_mocker(mocker):
+    def instantiate_browser(clss, driver="driver"):
+        mocker.patch.object(clss, "__init__", lambda self, d: None)
+        page = clss.__new__(clss)
+        setattr(page, driver,mocker.MagicMock())
+
+        return page
+
+    return instantiate_browser
