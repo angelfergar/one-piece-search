@@ -77,7 +77,7 @@ def save_links(chapter_id, links):
         cursor = conn.cursor()
         for link in links:
             cursor.execute(
-                "INSERT INTO chapter_links (chapter_id, source_name, url) VALUES (?, ?, ?)",
+                "INSERT INTO chapter_links (chapter_id, source_name, link) VALUES (?, ?, ?)",
                 (chapter_id, link["name"], link["url"])
             )
         conn.commit()
