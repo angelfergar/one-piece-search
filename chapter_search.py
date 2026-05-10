@@ -13,6 +13,7 @@ from email.mime.multipart import MIMEMultipart
 from datetime import date
 from utils.db_management import init_db, check_chapter_found, save_chapter, save_links, get_all_subscribers, add_subscriber
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from info_api import get_op_fact
 
 init_db()
 
@@ -92,20 +93,21 @@ def send_found_email(chapter, webs_available):
     subject = f"New One Piece Chapter {chapter} Available!"
     body = f"Chapter {chapter} is now available!\n\nYou can read it on:\n"
     for web in webs_available:
-        body += f"{web['name']}: {web['url']}"
+        body += f"{web['name']}: {web['url']}\n\n"
+        body += get_op_fact()
     send_email(subject, body)
 
 def send_break_email(weeks):
     subject = "No chapter this week :("
     body = ""
     if weeks > 1:
-        body = f"Oda is resting this week, we'll continue searching the One Piece after a {weeks} weeks break."
+        body = f"Oda is resting this week, we'll continue searching the One Piece after a {weeks} weeks break.\n\n"
     elif weeks == 1:
-        body = f"Oda is resting this week, we'll continue searching the One Piece after a {weeks} week break."
+        body = f"Oda is resting this week, we'll continue searching the One Piece after a {weeks} week break.\n\n"
     else:
         print(f"The number of weeks is not possible: {weeks}")
 
-    print(body)
+    body += get_op_fact()
     send_email(subject, body)
 
 # Main logic
@@ -147,7 +149,7 @@ if __name__ == "__main__":
             result = future.result()
             if result:
                 webs_available.append(result)
-                
+
     if webs_available:
         print(f"CHAPTER {chapter} IS ALREADY OUT!! Here are the webs where you can read it.")
         for web in webs_available:
