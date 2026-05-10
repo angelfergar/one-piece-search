@@ -1,23 +1,22 @@
-from flask import Flask, request
-import psycopg2
-from contextlib import contextmanager
+from flask import Flask, request, url_for
+from utils.db_management import get_all_subscribers
+from utils.db_management import get_db
 import os
 
 app = Flask(__name__)
 
-def get_connection():
-    return psycopg2.connect(os.environ["db_name"])
-
-@contextmanager
-def get_db():
-    conn = get_connection()
-    try:
-        yield conn
-    finally:
-        conn.close()
 @app.route("/")
 def home():
     return "One Piece Search Home"
+
+@app.route("/generate-links")
+def generate_unsubscribe_links():
+    result = {}
+
+    for email, token in get_all_subscribers():
+        result[email] = url_for("unsubscribe", token=token, _external=True)
+
+    return result
 
 @app.route("/unsubscribe")
 def unsubscribe():
@@ -26,7 +25,7 @@ def unsubscribe():
     with get_db() as conn:
         cursor = conn.cursor()
 
-        cursor.execute("UPDATE subscribers SET active = 0 WHERE token = ? AND active = 1", (token,))
+        cursor.execute("UPDATE subscribers SET active = 0 WHERE token = %s AND active = 1", (token,))
         conn.commit()
 
         if cursor.rowcount == 0:
@@ -36,3 +35,5 @@ def unsubscribe():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
+

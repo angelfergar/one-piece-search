@@ -1,7 +1,6 @@
 import psycopg2
 from contextlib import contextmanager
 import secrets
-from flask import url_for
 import os
 
 def get_connection():
@@ -34,7 +33,7 @@ def init_db():
             id SERIAL PRIMARY KEY,
             chapter_number INTEGER,
             week_found TEXT NOT NULL,
-            found_at TIME DEFAULT CURRENT_TIMESTAMP)
+            found_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP)
             """
         )
 
@@ -59,24 +58,23 @@ def add_subscriber(email):
         cursor = conn.cursor()
         try:
             token = generate_token()
-            cursor.execute("INSERT INTO subscribers (email, token) VALUES (?,?)", (email,token))
+            cursor.execute("INSERT INTO subscribers (email, token) VALUES (%s,%s)", (email,token))
             conn.commit()
-        except psycopg2.IntegrityError:
-            print("Email already in the database")
+        except psycopg2.IntegrityError as e:
+            print("Email already in the database",e)
 
 def get_all_subscribers():
     with get_db() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT email, token FROM subscribers WHERE active = 1")
-        emails = [row[0] for row in cursor.fetchall()]
-        return emails
+        return cursor.fetchall()
 
 def save_chapter(chapter_number, week_found):
     with get_db() as conn:
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO chapters (chapter_number, week_found) VALUES (?, ?)", (chapter_number, week_found))
+        cursor.execute("INSERT INTO chapters (chapter_number, week_found) VALUES (%s, %s) RETURNING id", (chapter_number, week_found))
         conn.commit()
-        chapter_id = cursor.lastrowid
+        chapter_id = cursor.fetchone()[0]
         return chapter_id
 
 def save_links(chapter_id, links):
@@ -84,7 +82,7 @@ def save_links(chapter_id, links):
         cursor = conn.cursor()
         for link in links:
             cursor.execute(
-                "INSERT INTO chapter_links (chapter_id, source_name, link) VALUES (?, ?, ?)",
+                "INSERT INTO chapter_links (chapter_id, source_name, link) VALUES (%s, %s, %s)",
                 (chapter_id, link["name"], link["url"])
             )
         conn.commit()
@@ -92,17 +90,15 @@ def save_links(chapter_id, links):
 def check_chapter_found(week_found):
     with get_db() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT 1 FROM chapters WHERE week_found = ?", (week_found,))
+        cursor.execute("SELECT 1 FROM chapters WHERE week_found = %s", (week_found,))
         result = cursor.fetchone()
         return result is not None
 
-def generate_unsubscribe_link():
-    unsubscribe_link = {}
-    for email, token in get_all_subscribers():
-        link = url_for("unsubscribe", token=token, _external=True)
-        unsubscribe_link[email] = link
-
-    return unsubscribe_link
+receiver_emails = get_all_subscribers()
+unsubscribe_link = generate_unsubscribe_link()
+for email, link in unsubscribe_link.items():
+    final_body = f"Para darte de baja, pulsa aquí: {link}"
+    print(final_body)
 
 
 
