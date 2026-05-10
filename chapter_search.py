@@ -12,6 +12,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import date
 from utils.db_management import init_db, check_chapter_found, save_chapter, save_links, get_all_subscribers, add_subscriber
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 init_db()
 
@@ -120,26 +121,33 @@ if __name__ == "__main__":
         sys.exit(0)
 
     chapter = mangaplus_info["chapter"]
-
-    wc = WebConfig()
     webs_available = []
 
-    for web in web_config:
+    def check_webs(web, chapter):
         url = web["url"].format(chapter=chapter)
+        wc = WebConfig()
         driver = wc.set_up(url)
         try:
             page = web["clss"](driver)
-            images = page.get_chapter_images(chapter)
-
-            if images:
-                webs_available.append({"name": web["web_name"], "url": url})
+            found = page.get_chapter_images(chapter)
+            if found:
+                return {"name": web["web_name"], "url": url}
             else:
                 print(f"NOT LUCKY: Chapter {chapter} NOT available in: {url}")
+                return None
         except Exception as e:
             print(f"Error while checking {url}: {e}")
+            return None
         finally:
             driver.quit()
 
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        futures = {executor.submit(check_webs, web, chapter): web for web in web_config}
+        for future in as_completed(futures):
+            result = future.result()
+            if result:
+                webs_available.append(result)
+                
     if webs_available:
         print(f"CHAPTER {chapter} IS ALREADY OUT!! Here are the webs where you can read it.")
         for web in webs_available:
