@@ -11,7 +11,7 @@ import sys
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import date
-from utils.db_management import init_db, check_chapter_found, save_chapter, save_links, get_all_subscribers, add_subscriber
+from utils.db_management import init_db, check_chapter_found, save_chapter, save_links, get_all_subscribers, add_subscriber, generate_unsubscribe_link
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from info_api import get_op_fact
 
@@ -69,10 +69,10 @@ def get_mangaplus_info():
         driver.quit()
 
 # Email information
-def send_email(subject, body):
+def send_email(subject, body, receiver):
     message = MIMEMultipart()
     message["From"] = sender_email
-    message["To"] = ", ".join(receiver_emails)
+    message["To"] = receiver
     message["Subject"] = subject
     message.attach(MIMEText(body, "plain"))
 
@@ -82,7 +82,7 @@ def send_email(subject, body):
             server.login(sender_email, password)
             server.sendmail(
                 sender_email,
-                receiver_emails,
+                receiver,
                 message.as_string()
             )
         print(f"Email sent successfully!")
@@ -94,8 +94,12 @@ def send_found_email(chapter, webs_available):
     body = f"Chapter {chapter} is now available!\n\nYou can read it on:\n"
     for web in webs_available:
         body += f"{web['name']}: {web['url']}\n\n"
-        body += get_op_fact()
-    send_email(subject, body)
+    body += get_op_fact() +"\n\n"
+
+    unsubscribe_link = generate_unsubscribe_link()
+    for email, link in unsubscribe_link.items():
+        final_body = body + f"Para darte de baja, pulsa aquí: {link}"
+        send_email(subject, final_body, receiver=email)
 
 def send_break_email(weeks):
     subject = "No chapter this week :("
@@ -107,8 +111,12 @@ def send_break_email(weeks):
     else:
         print(f"The number of weeks is not possible: {weeks}")
 
-    body += get_op_fact()
-    send_email(subject, body)
+    body += get_op_fact() + "\n\n"
+
+    unsubscribe_link = generate_unsubscribe_link()
+    for email, link in unsubscribe_link.items():
+        final_body = body + f"Para darte de baja, pulsa aquí: {link}"
+        send_email(subject, final_body, receiver=email)
 
 # Main logic
 if __name__ == "__main__":

@@ -1,8 +1,10 @@
 import sqlite3
 from contextlib import contextmanager
 import secrets
+from flask import url_for
 
 db_name = r"C:\jenkins_data\onepiece.db"
+base_url = "https://onepiece-unsubscribe.onrender.com/"
 
 def get_connection():
     return sqlite3.connect(db_name)
@@ -22,9 +24,9 @@ def init_db():
         cursor.execute(
             """CREATE TABLE IF NOT EXISTS subscribers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT UNIQUE NOT NULL),
+            email TEXT UNIQUE NOT NULL,
             token TEXT UNIQUE,
-            active INTEGER DEFAULT 1
+            active INTEGER DEFAULT 1)
             """
         )
 
@@ -67,7 +69,7 @@ def add_subscriber(email):
 def get_all_subscribers():
     with get_db() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT email FROM subscribers WHERE active = 1")
+        cursor.execute("SELECT email, token FROM subscribers WHERE active = 1")
         emails = [row[0] for row in cursor.fetchall()]
         return emails
 
@@ -95,4 +97,15 @@ def check_chapter_found(week_found):
         cursor.execute("SELECT 1 FROM chapters WHERE week_found = ?", (week_found,))
         result = cursor.fetchone()
         return result is not None
+
+def generate_unsubscribe_link():
+    unsubscribe_link = {}
+    for email, token in get_all_subscribers():
+        link = url_for("unsubscribe", token=token, _external=True)
+        unsubscribe_link[email] = link
+
+    return unsubscribe_link
+
+
+
 
