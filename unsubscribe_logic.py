@@ -16,6 +16,9 @@ def get_db():
         yield conn
     finally:
         conn.close()
+@app.route("/")
+def home():
+    return "One Piece Search Home"
 
 @app.route("/unsubscribe")
 def unsubscribe():
