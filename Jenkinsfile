@@ -48,6 +48,7 @@ pipeline {
                         bat '''
                         set smtp_pass=%smtp_pass%
                         set op_receivers=%op_receivers%
+			set db_name=postgresql://onepiece_db_m34d_user:LnyCdNg4al2C6g6pTBmye0tx9k8msD62@dpg-d80d4uosfn5c739e2jr0-a.frankfurt-postgres.render.com/onepiece_db_m34d
                         venv\\Scripts\\python.exe chapter_search.py
                         '''        
                 }

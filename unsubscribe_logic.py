@@ -1,13 +1,12 @@
 from flask import Flask, request
-import sqlite3
+import psycopg2
 from contextlib import contextmanager
 import os
 
 app = Flask(__name__)
-db_name = r"C:\jenkins_data\onepiece.db"
 
 def get_connection():
-    return sqlite3.connect(db_name)
+    return psycopg2.connect(os.environ["db_name"])
 
 @contextmanager
 def get_db():

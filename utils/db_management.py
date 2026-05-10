@@ -1,13 +1,11 @@
-import sqlite3
+import psycopg2
 from contextlib import contextmanager
 import secrets
 from flask import url_for
-
-db_name = r"C:\jenkins_data\onepiece.db"
-base_url = "https://onepiece-unsubscribe.onrender.com/"
+import os
 
 def get_connection():
-    return sqlite3.connect(db_name)
+    return psycopg2.connect(os.environ["db_name"])
 
 @contextmanager
 def get_db():
@@ -23,7 +21,7 @@ def init_db():
 
         cursor.execute(
             """CREATE TABLE IF NOT EXISTS subscribers (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             email TEXT UNIQUE NOT NULL,
             token TEXT UNIQUE,
             active INTEGER DEFAULT 1)
@@ -33,7 +31,7 @@ def init_db():
         cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS chapters (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             chapter_number INTEGER,
             week_found TEXT NOT NULL,
             found_at TIME DEFAULT CURRENT_TIMESTAMP)
@@ -43,7 +41,7 @@ def init_db():
         cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS chapter_links (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id SERIAL PRIMARY KEY,
             chapter_id INTEGER,
             source_name TEXT,
             link TEXT,
@@ -63,7 +61,7 @@ def add_subscriber(email):
             token = generate_token()
             cursor.execute("INSERT INTO subscribers (email, token) VALUES (?,?)", (email,token))
             conn.commit()
-        except sqlite3.IntegrityError:
+        except psycopg2.IntegrityError:
             print("Email already in the database")
 
 def get_all_subscribers():
