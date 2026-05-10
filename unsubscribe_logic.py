@@ -1,5 +1,4 @@
-from flask import Flask, request, url_for
-from utils.db_management import get_all_subscribers
+from flask import Flask, request
 from utils.db_management import get_db
 import os
 
@@ -8,15 +7,6 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     return "One Piece Search Home"
-
-@app.route("/generate-links")
-def generate_unsubscribe_links():
-    result = {}
-
-    for email, token in get_all_subscribers():
-        result[email] = url_for("unsubscribe", token=token, _external=True)
-
-    return result
 
 @app.route("/unsubscribe")
 def unsubscribe():

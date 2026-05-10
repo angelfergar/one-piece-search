@@ -93,13 +93,3 @@ def check_chapter_found(week_found):
         cursor.execute("SELECT 1 FROM chapters WHERE week_found = %s", (week_found,))
         result = cursor.fetchone()
         return result is not None
-
-receiver_emails = get_all_subscribers()
-unsubscribe_link = generate_unsubscribe_link()
-for email, link in unsubscribe_link.items():
-    final_body = f"Para darte de baja, pulsa aquí: {link}"
-    print(final_body)
-
-
-
-
