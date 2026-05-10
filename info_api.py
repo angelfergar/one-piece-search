@@ -13,28 +13,38 @@ def get_op_data(endpoint):
         response = requests.get(main_url+endpoint, timeout=5)
         return response.json()
     except:
-        pass
+        return None
 
 def get_fruit_info(fruit):
     name = fruit.get("roman_name", "name")
     type = fruit.get("type")
-    raw_description = fruit.get("description")
-    description = deepl_client.translate_text(raw_description, target_lang="ES")
-    message = f"Hay una fruta llamada {name}. Esta fruta es del tipo {type}.\n{description}"
+    description = fruit.get("description")
+    if description:
+        description = deepl_client.translate_text(description, target_lang="ES")
+    else:
+        description = ""
+    message = "¿Sabías que...?\n"
+    message += f"Hay una fruta llamada {name}. Esta fruta es del tipo {type}.\n{description.text}"
     return message
 
 def get_sword_info(sword):
     name = sword.get("name")
-    raw_description = sword.get("description")
-    description = deepl_client.translate_text(raw_description, target_lang="ES")
-    message = f"Hay una espada llamada {name}.\n{description}"
+    description = sword.get("description")
+    if description:
+        description = deepl_client.translate_text(description, target_lang="ES")
+    else:
+        description = ""
+    message = "¿Sabías que...?\n"
+    message += f"Hay una espada llamada {name}.\n{description.text}"
     return message
 def get_character_info(character):
     name = character.get("name")
     size = character.get("size")
     age = character.get("age")
     if size and age:
-        message = f"{name} mide {size} y tiene {age[:-4]} años.\n"
+        age = age.replace("ans", "años")
+        message = "¿Sabías que...?\n"
+        message += f"{name} mide {size} y tiene {age}.\n"
         bounty = character.get("bounty")
         if bounty:
             bounty = bounty + "₿"
@@ -47,7 +57,7 @@ def get_character_info(character):
 
         return message
     else:
-        get_op_fact()
+        return get_op_fact()
 
 def get_op_fact():
     random_key = random.choice(list(api_options.keys()))
@@ -56,18 +66,12 @@ def get_op_fact():
     data = get_op_data(endpoint)
     random_data = random.choice(data)
 
-    message = "¿Sabías que...?\n"
+    message = ""
 
     if api_options["fruits"] in endpoint:
-        message += str(get_fruit_info(random_data))
+        message = get_fruit_info(random_data)
     elif api_options["swords"] in endpoint:
-        message += str(get_sword_info(random_data))
+        message = get_sword_info(random_data)
     elif api_options["characters"] in endpoint:
-        message += str(get_character_info(random_data))
+        message = get_character_info(random_data)
     return message
-
-
-
-
-
-
