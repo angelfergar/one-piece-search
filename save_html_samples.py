@@ -17,7 +17,9 @@ def create_webs(chapter):
         "manga_plus": "https://mangaplus.shueisha.co.jp/titles/200016",
         "read_onepiece": "https://ww01.readonepiece.cc/",
         "opscans_found": f"https://opchapters.com/op-chapter-{chapter}/",
-        "opscans_not_found": "https://opchapters.com/op-chapter-2000/"
+        "opscans_not_found": "https://opchapters.com/op-chapter-2000/",
+        "tcbop": "https://tcbonepiecechapters.com/mangas/5/one-piece",
+        "animeallstar": "https://animeallstar30.com/category/one-piece/"
     }
 
 def capture_web():
