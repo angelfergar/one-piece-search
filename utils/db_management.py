@@ -1,5 +1,6 @@
 import sqlite3
 from contextlib import contextmanager
+import secrets
 
 db_name = r"C:\jenkins_data\onepiece.db"
 
@@ -21,7 +22,9 @@ def init_db():
         cursor.execute(
             """CREATE TABLE IF NOT EXISTS subscribers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT UNIQUE NOT NULL)
+            email TEXT UNIQUE NOT NULL),
+            token TEXT UNIQUE,
+            active INTEGER DEFAULT 1
             """
         )
 
@@ -48,11 +51,15 @@ def init_db():
 
         conn.commit()
 
+def generate_token():
+    return secrets.token_urlsafe(32)
+
 def add_subscriber(email):
     with get_db() as conn:
         cursor = conn.cursor()
         try:
-            cursor.execute("INSERT INTO subscribers (email) VALUES (?)", (email,))
+            token = generate_token()
+            cursor.execute("INSERT INTO subscribers (email, token) VALUES (?,?)", (email,token))
             conn.commit()
         except sqlite3.IntegrityError:
             print("Email already in the database")
@@ -60,7 +67,7 @@ def add_subscriber(email):
 def get_all_subscribers():
     with get_db() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT email FROM subscribers")
+        cursor.execute("SELECT email FROM subscribers WHERE active = 1")
         emails = [row[0] for row in cursor.fetchall()]
         return emails
 
@@ -88,3 +95,4 @@ def check_chapter_found(week_found):
         cursor.execute("SELECT 1 FROM chapters WHERE week_found = ?", (week_found,))
         result = cursor.fetchone()
         return result is not None
+

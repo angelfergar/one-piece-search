@@ -18,7 +18,7 @@ from info_api import get_op_fact
 init_db()
 
 # For new mails
-'''for email in os.environ.get("op_receivers", "").split(","):
+'''
     add_subscriber(email)
 '''
 
