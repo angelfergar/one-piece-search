@@ -123,7 +123,7 @@ def send_break_email(weeks):
 
     unsubscribe_link = generate_unsubscribe_links(base_url)
     for email, link in unsubscribe_link.items():
-        final_body = body + "Para darte de baja, pulsa aquí: {link}"
+        final_body = body + f"Para darte de baja, pulsa aquí: {link}"
         send_email(subject, final_body, receiver=email)
 
 # Main logic
