@@ -36,7 +36,7 @@ mangaplus_url = "https://mangaplus.shueisha.co.jp/titles/100020"
 base_url = "https://onepiece-unsubscribe.onrender.com"
 
 # Email config
-sender_email = os.environ.get("smtp_user", "anfernagar@gmail.com")
+sender_email = os.environ.get("smtp_user", "theeternalpose@gmail.com")
 password = os.environ.get("smtp_pass")
 smtp_server = "smtp.gmail.com"
 smtp_port = 587
@@ -82,7 +82,7 @@ def send_email(subject, body, receiver):
     message["From"] = sender_email
     message["To"] = receiver
     message["Subject"] = subject
-    message.attach(MIMEText(body, "plain"))
+    message.attach(MIMEText(body, "html"))
 
     try:
         with smtplib.SMTP(smtp_server, smtp_port) as server:
@@ -98,33 +98,82 @@ def send_email(subject, body, receiver):
         print(f"Failed to send email: {e}")
 
 def send_found_email(chapter, webs_available):
-    subject = f"New One Piece Chapter {chapter} Available!"
-    body = f"Chapter {chapter} is now available!\n\nYou can read it on:\n"
+    subject = f"Capítulo {chapter} de One Piece disponible!"
+    webs_html = ""
+    fact = get_op_fact()
+
     for web in webs_available:
-        body += f"{web['name']}: {web['url']}\n\n"
-    body += get_op_fact() +"\n\n"
+        webs_html += f"""
+                <li style="margin: 10px 0;">
+                    <a href="{web['url']}" style="color: #ffffff; background-color: #f5a623; 
+                    padding: 8px 15px; border-radius: 5px; text-decoration: none;">
+                        {web['name']}
+                    </a>
+                </li>
+                """
 
     unsubscribe_link = generate_unsubscribe_links(base_url)
     for email, link in unsubscribe_link.items():
-        final_body = body + f"Para darte de baja, pulsa aquí: {link}"
-        send_email(subject, final_body, receiver=email)
+        body = f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; background-color: #1a1a2e; color: #ffffff; padding: 20px;">
 
-def send_break_email(weeks):
-    subject = "No chapter this week :("
-    body = ""
-    if weeks > 1:
-        body = f"Oda is resting this week, we'll continue searching the One Piece after a {weeks} weeks break.\n\n"
-    elif weeks == 1:
-        body = f"Oda is resting this week, we'll continue searching the One Piece after a {weeks} week break.\n\n"
-    else:
-        print(f"The number of weeks is not possible: {weeks}")
+                <div style="max-width: 600px; margin: auto; background-color: #16213e; border-radius: 10px; padding: 30px;">
 
-    body += get_op_fact() + "\n\n\n"
+                    <h1 style="color: #f5a623; text-align: center;">The Eternal Pose</h1>
+                        <hr style="border-color: #f5a623;">
+
+                    <h3 style="color: #f5a623;">Puedes leer el capítulo en:</h3>
+                        <ul style="list-style: none; padding: 0;">
+                            {webs_html}
+                        </ul>
+
+                    <div style="background-color: #0f3460; border-left: 4px solid #f5a623; padding: 15px; border-radius: 5px; margin-top: 20px;">
+                            <h3 style="color: #f5a623; margin-top: 0;">¿Sabías que...?</h3>
+                            <p style="font-size: 14px; line-height: 1.6;">{fact}</p>
+                    </div>
+
+                    <p style="text-align: center; margin-top: 30px; font-size: 12px; color: #888888;">
+                            ¿Ya no quieres buscar el One Piece?
+                            <a href="{link}" style="color: #f5a623;">Darte de baja</a>
+                    </p>
+                </div>
+            </body>
+            </html>
+            """
+        send_email(subject, body, receiver=email)
+
+def send_break_email():
+    subject = "No hay capítulo esta semana :("
+    fact = get_op_fact()
 
     unsubscribe_link = generate_unsubscribe_links(base_url)
     for email, link in unsubscribe_link.items():
-        final_body = body + f"Para darte de baja, pulsa aquí: {link}"
-        send_email(subject, final_body, receiver=email)
+        body = f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; background-color: #1a1a2e; color: #ffffff; padding: 20px;">
+
+                <div style="max-width: 600px; margin: auto; background-color: #16213e; border-radius: 10px; padding: 30px;">
+                
+                    <h1 style="color: #f5a623; text-align: center;">The Eternal Pose</h1>
+                        <hr style="border-color: #f5a623;">
+                    
+                    <h3 style="color: #f5a623;">Oda está descansando esta semana. Volveremos la semana que viene</h3>
+                    
+                    <div style="background-color: #0f3460; border-left: 4px solid #f5a623; padding: 15px; border-radius: 5px; margin-top: 20px;">
+                            <h3 style="color: #f5a623; margin-top: 0;">¿Sabías que...?</h3>
+                            <p style="font-size: 14px; line-height: 1.6;">{fact}</p>
+                    </div>
+                    
+                    <p style="text-align: center; margin-top: 30px; font-size: 12px; color: #888888;">
+                            ¿Ya no quieres buscar el One Piece?
+                            <a href="{link}" style="color: #f5a623;">Darte de baja</a>
+                    </p>
+                    </div>
+            </body>
+            </html>
+        """
+        send_email(subject, body, receiver=email)
 
 # Main logic
 if __name__ == "__main__":
@@ -134,7 +183,7 @@ if __name__ == "__main__":
     mangaplus_info = get_mangaplus_info()
 
     if mangaplus_info["is_break"]:
-        send_break_email(mangaplus_info["wait"])
+        send_break_email()
         save_chapter(None, current_week())
         sys.exit(0)
 
