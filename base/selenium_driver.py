@@ -106,6 +106,16 @@ class SeleniumDriver():
             print(f"Element not found with locator: {locator} and locatorType: {locator_type}")
         return element
 
+    def wait_for_any(self, locators, timeout=5):
+        for locator in locators:
+            try:
+                element = self.wait_for_element(locator=locator, timeout=timeout)
+                if element:
+                    return locator
+            except TimeoutError:
+                continue
+        return None
+
     def switch_frame(self, id="", name="", index=None):
         if id:
             self.driver.switch_to.frame(id)

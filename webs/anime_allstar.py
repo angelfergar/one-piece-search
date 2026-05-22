@@ -137,11 +137,11 @@ class AllStar(BasePage):
                 break
 
         # Check if there's a reasonable number of pages
-        element = self.wait_for_element(locator=self._chapter_images, condition="click")
-        if element:
-            images_list = self.get_elementList(self._chapter_images)
+        locator = self.wait_for_any([self._chapter_images, self._new_chapter_images])
+
+        if locator:
+            images_list = self.get_elementList(locator)
         else:
-            self.wait_for_element(locator=self._new_chapter_images, condition="click")
-            images_list = self.get_elementList(self._new_chapter_images)
+            images_list = []
 
         return bool(images_list and len(images_list) > min_images_required)
