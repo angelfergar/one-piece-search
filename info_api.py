@@ -23,8 +23,7 @@ def get_fruit_info(fruit):
         description = deepl_client.translate_text(description, target_lang="ES")
     else:
         description = ""
-    message = "¿Sabías que...?\n"
-    message += f"Hay una fruta llamada {name}. Esta fruta es del tipo {type}.\n{description.text}"
+    message = f"Hay una fruta llamada {name}. Esta fruta es del tipo {type}.\n{description.text}"
     return message
 
 def get_sword_info(sword):
@@ -34,8 +33,7 @@ def get_sword_info(sword):
         description = deepl_client.translate_text(description, target_lang="ES")
     else:
         description = ""
-    message = "¿Sabías que...?\n"
-    message += f"Hay una espada llamada {name}.\n{description.text}"
+    message = f"Hay una espada llamada {name}.\n{description.text}"
     return message
 def get_character_info(character):
     name = character.get("name")
@@ -43,8 +41,7 @@ def get_character_info(character):
     age = character.get("age")
     if size and age:
         age = age.replace("ans", "años")
-        message = "¿Sabías que...?\n"
-        message += f"{name} mide {size} y tiene {age}.\n"
+        message = f"{name} mide {size} y tiene {age}.\n"
         bounty = character.get("bounty")
         if bounty:
             bounty = bounty + "₿"
