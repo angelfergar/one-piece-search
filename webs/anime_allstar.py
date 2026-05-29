@@ -22,7 +22,7 @@ class AllStar(BasePage):
     _extra_message = "//div[@class='ast-excerpt-container ast-blog-single-element']"
     _title_chapters = "//a[@rel='bookmark']"
     _chapter_images = "//div[@class='separator']"
-    _new_chapter_images = "//img[@class='aligncenter lazyloaded']"
+    _new_chapter_images = "//img[@class='aligncenter lazyload']"
 
     def normalize(self, text):
         text = text.upper()
