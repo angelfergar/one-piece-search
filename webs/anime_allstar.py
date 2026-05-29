@@ -137,7 +137,7 @@ class AllStar(BasePage):
                 break
 
         # Check if there's a reasonable number of pages
-        locator = self.wait_for_any([self._chapter_images, self._new_chapter_images])
+        locator = self.wait_for_any([self._new_chapter_images, self._chapter_images])
 
         if locator:
             images_list = self.get_elementList(locator)
