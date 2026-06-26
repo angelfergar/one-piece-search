@@ -2,7 +2,7 @@ name: OP Chapter Pipeline
 
 on:
   schedule:
-    - cron: "*/30 * * * 4,5,6"
+    - cron: '*/30 * * * 4,5,6'
   workflow_dispatch:
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
       - name: Python setup
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12.10"
+          python-version: '3.12.10'
 
       - name: Install Tesseract
         run: sudo apt-get install -y tesseract-ocr
@@ -32,7 +32,7 @@ jobs:
 
 
       - name: Finish Python venv
-        if: steps.cache-venv.outputs.cache-hit != "true"
+        if: steps.cache-venv.outputs.cache-hit != 'true'
         run: python -m venv venv
 
       - name: Install dependencies
