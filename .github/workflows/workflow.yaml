@@ -40,11 +40,14 @@ jobs:
           venv/bin/pip install --upgrade pip
           venv/bin/pip install -r requirements.txt
 
-      - name: Firefox Setup
-        uses: browser-actions/setup-firefox@v1
-
-      - name: Gecko Driver Setup
-        uses: browser-actions/setup-geckodriver@v1
+      - name: Install geckodriver
+        run: |
+            GECKODRIVER_VERSION=$(curl -s https://api.github.com/repos/mozilla/geckodriver/releases/latest | grep tag_name | cut -d '"' -f4)
+            curl -L "https://github.com/mozilla/geckodriver/releases/download/${GECKODRIVER_VERSION}/geckodriver-${GECKODRIVER_VERSION}-linux64.tar.gz" -o geckodriver.tar.gz
+            tar -xzf geckodriver.tar.gz
+            chmod +x geckodriver
+            sudo mv geckodriver /usr/local/bin/
+            rm geckodriver.tar.gz
 
       - name: Search Chapter
         env:
