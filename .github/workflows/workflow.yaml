@@ -40,6 +40,12 @@ jobs:
           venv/bin/pip install --upgrade pip
           venv/bin/pip install -r requirements.txt
 
+      - name: Firefox Setup
+        uses: browser-actions/setup-firefox@v1
+
+      - name: Gecko Driver Setup
+        uses: browser-actions/setup-geckodriver@v1
+
       - name: Search Chapter
         env:
           smtp_pass: ${{ secrets.SMTP_PASS }}
