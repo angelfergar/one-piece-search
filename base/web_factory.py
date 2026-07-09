@@ -5,6 +5,7 @@ class WebDriverFactory():
     @staticmethod
     def get_webdriver(base_url):
         options = Options()
+        options.set_preference("intl.accept_languages", "es-ES,es")
         options.add_argument("--headless")
 
         driver = webdriver.Firefox(options=options)
