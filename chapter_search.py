@@ -29,7 +29,7 @@ web_config = [
     # {"url": "https://ww1.tcbscansonepiece.com/one-piece-manga", "clss": TcbScans, "web_name": "TCB Scans"},
     {"url": "https://tcbonepiecechapters.com/mangas/5/one-piece", "clss": TcbOp, "web_name": "TCB One Piece"},
     {"url": "https://readonepiece.cc/", "clss": ReadOnePiece, "web_name": "Read One Piece"},
-    {"url": "https://animeallstar30.com/category/one-piece/", "clss": AllStar, "web_name": "Anime All Star"}
+    {"url": "https://animeallstar30.com/category/one-piece-espanol/", "clss": AllStar, "web_name": "Anime All Star"}
 ]
 
 mangaplus_url = "https://mangaplus.shueisha.co.jp/titles/100020"
