@@ -20,7 +20,7 @@ jobs:
           python-version: '3.12.10'
 
       - name: Install Tesseract
-        run: sudo apt-get install -y tesseract-ocr
+        run: sudo apt-get install -y tesseract-ocr tesseract-ocr-spa
 
       - name: Check cache venv
         uses: actions/cache@v5
