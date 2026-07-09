@@ -15,8 +15,6 @@ class AllStar(BasePage):
     def __init__(self, driver):
         super().__init__(driver)
 
-    pytesseract.pytesseract.tesseract_cmd = r"C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
-
     # Locators
     _link_chapters = "//div[@class='ast-post-format- blog-layout-4 ast-article-inner']"
     _extra_message = "//div[@class='ast-excerpt-container ast-blog-single-element']"
