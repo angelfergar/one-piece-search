@@ -7,10 +7,17 @@ class MangaPlus(BasePage):
         super().__init__(driver)
 
     # Locators
+    _lang_button = "//a[contains(text(), 'Español')]"
     _text = "//span[contains(text(), 'próximo capítulo')]"
     _chapter = "//p[@class='ChapterListItem-module_name_3h9dj']"
 
+    def select_spanish(self):
+        self.wait_for_element(locator=self._lang_button, condition="click")
+        self.element_click(self._lang_button)
+
     def find_break_week(self):
+        self.select_spanish()
+
         self.wait_for_element(locator=self._text, condition="visible")
         release_date = self.get_element(locator=self._text)
         release_text = self.get_text(element=release_date)
@@ -24,6 +31,8 @@ class MangaPlus(BasePage):
         return f'W{week}'
 
     def find_chapter(self):
+        self.select_spanish()
+
         self.wait_for_element(locator=self._chapter,condition="visible")
         chapter_number = self.get_elementList(locator=self._chapter)
 
