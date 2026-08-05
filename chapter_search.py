@@ -135,7 +135,7 @@ def send_found_email(chapter, webs_available):
 
                     <p style="text-align: center; margin-top: 30px; font-size: 12px; color: #888888;">
                             ¿Ya no quieres buscar el One Piece?
-                            <a href="{link}" style="color: #f5a623;">Darte de baja</a>
+                            <a href="{link}" style="color: #f5a623;">Date de baja</a>
                     </p>
                 </div>
             </body>
