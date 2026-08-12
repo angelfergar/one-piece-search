@@ -81,7 +81,7 @@ class AllStar(BasePage):
         min_images_required = 5
         language_warning = "(EN JAPONES)"
         spoiler_warning = "(SPOILER)"
-        match_threshold = 75
+        match_threshold = 70
 
         original_window = self.driver.current_window_handle
         chapter_listed = False
