@@ -95,7 +95,7 @@ class AllStar(BasePage):
         match_score_jp = fuzz.ratio(self.normalize(in_japanese), self.normalize(language_warning))
         match_score_spoiler = fuzz.ratio(self.normalize(spoiler), self.normalize(spoiler_warning))
 
-        is_japanese = match_score_jp > match_threshold
+        is_japanese = match_score_jp >= match_threshold
         is_spoiler = match_score_spoiler > match_threshold
 
         print(f'{in_japanese} vs {language_warning}')
