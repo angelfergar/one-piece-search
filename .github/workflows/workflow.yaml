@@ -17,7 +17,7 @@ jobs:
       - name: Python setup
         uses: actions/setup-python@v6
         with:
-          python-version: 'python-3.13.18-linux-26.04-x6'
+          python-version: 'python-3.13'
 
       - name: Install Tesseract
         run: sudo apt-get install -y tesseract-ocr tesseract-ocr-spa
