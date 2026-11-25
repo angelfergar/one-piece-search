@@ -17,7 +17,7 @@ jobs:
       - name: Python setup
         uses: actions/setup-python@v6
         with:
-          python-version: '3.12.10'
+          python-version: ${{ vars.PYTHON_VERSION }}
 
       - name: Install Tesseract
         run: sudo apt-get install -y tesseract-ocr tesseract-ocr-spa
@@ -27,9 +27,7 @@ jobs:
         id: cache-venv
         with:
           path: venv
-          key: venv-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
-          restore-keys: venv-${{ runner.os }}-
-
+          key: venv-${{ runner.os }}-python-${{ vars.PYTHON_VERSION }}-${{ hashFiles('requirements.txt') }}
 
       - name: Finish Python venv
         if: steps.cache-venv.outputs.cache-hit != 'true'

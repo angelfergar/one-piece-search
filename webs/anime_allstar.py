@@ -82,7 +82,7 @@ class AllStar(BasePage):
         language_warning = "(EN JAPONES)"
         english_message = "(EN INGLES)"
         spoiler_warning = "(SPOILER)"
-        match_threshold = 75
+        match_threshold = 70
 
         original_window = self.driver.current_window_handle
         chapter_listed = False
@@ -98,7 +98,7 @@ class AllStar(BasePage):
         match_score_spoiler = fuzz.ratio(self.normalize(spoiler), self.normalize(spoiler_warning))
         match_score_english = fuzz.ratio(self.normalize(in_english), self.normalize(english_message))
 
-        is_japanese = match_score_jp > match_threshold
+        is_japanese = match_score_jp >= match_threshold
         is_spoiler = match_score_spoiler > match_threshold
         is_english = match_score_english > match_threshold
 
