@@ -106,7 +106,7 @@ def send_found_email(chapter, webs_available):
         webs_html += f"""
                 <li style="margin: 10px 0;">
                     <a href="{web['url']}" style="color: #ffffff; background-color: #f5a623; 
-                    padding: 8px 15px; border-radius: 5px; text-decoration: none;">
+                    padding: 8px 15px; border-radius: 5px; text-decoration: none; margin: 1px">
                         {web['name']}
                     </a>
                 </li>
