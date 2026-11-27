@@ -80,7 +80,6 @@ class AllStar(BasePage):
         chapters_checked = 3
         min_images_required = 5
         language_warning = "(EN JAPONES)"
-        english_message = "(EN INGLES)"
         spoiler_warning = "(SPOILER)"
         match_threshold = 70
 
@@ -91,23 +90,19 @@ class AllStar(BasePage):
         # Check the thumbnail
         processed_path = self.capture_thumbnail_image()
         in_japanese = self.ocr_chapter_title(processed_path)
-        in_english = self.ocr_chapter_title(processed_path)
         spoiler = self.ocr_chapter_title(processed_path, language='eng')
 
         match_score_jp = fuzz.ratio(self.normalize(in_japanese), self.normalize(language_warning))
         match_score_spoiler = fuzz.ratio(self.normalize(spoiler), self.normalize(spoiler_warning))
-        match_score_english = fuzz.ratio(self.normalize(in_english), self.normalize(english_message))
+
 
         is_japanese = match_score_jp >= match_threshold
         is_spoiler = match_score_spoiler > match_threshold
-        is_english = match_score_english > match_threshold
 
         print(f'{in_japanese} vs {language_warning}')
         print(f'Score: {match_score_jp}')
         print(f'{spoiler} vs {spoiler_warning}')
         print(f'Score: {match_score_spoiler}')
-        print(f'{in_english} vs {english_message}')
-        print(f'Score: {match_score_english}')
 
         # Check if there's another warning in the text for the chapter
         list_of_titles = self.get_elementList(self._title_chapters)
@@ -121,7 +116,8 @@ class AllStar(BasePage):
                 info_text = self.get_text(element=info_message)
 
             is_warned = bool(info_text)
-            if is_warned or is_spoiler or is_japanese or not is_english:
+
+            if is_warned or is_spoiler or is_japanese:
                 print("This link won't be opened as it contains an old chapter or a new one not translated")
                 continue
 
